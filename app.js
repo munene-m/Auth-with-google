@@ -7,6 +7,7 @@ const { connectDB } = require("./config/db")
 const bodyParser = require("body-parser")
 const session = require('express-session')
 const authRoute = require('./routes/authRoute')
+const adminRoute = require('./routes/adminRoute')
 const PORT = 3000
 
 connectDB()
@@ -28,6 +29,7 @@ app.use(session({
   }));
   
 app.use("/auth", authRoute)
+app.use("/predictions", adminRoute)
 
 
 app.get('/', (req, res) => {
