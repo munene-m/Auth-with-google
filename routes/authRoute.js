@@ -1,12 +1,13 @@
 const express = require('express')
-const { loginUser, registerUser, loginWithGoogle, googleAuthCallback } = require("../controllers/authController");
+const { loginUser, registerUser, getCredentials, loginWithGoogle, googleAuthCallback, updateUser } = require("../controllers/authController");
 
 const router = express.Router();
-
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/auth/google", loginWithGoogle);
-router.get("/auth/google/callback", googleAuthCallback);
+router.route("/credentials").get(getCredentials)
+router.route("/register").post(registerUser)
+router.route("/login").post(loginUser)
+router.route("/update/:id").put(updateUser)
+router.route("/auth/google").get(loginWithGoogle)
+router.route("/auth/google/callback").get(googleAuthCallback);
 
 module.exports = router
 
