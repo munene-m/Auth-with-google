@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
   googleDisplayName: {
     type: String,
   },
+  paid: {
+    type: Boolean,
+    default: false
+  }
 });
 
 userSchema.plugin(findOrCreate);

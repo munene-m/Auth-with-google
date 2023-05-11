@@ -6,7 +6,7 @@ const passport = require('passport')
 require('../passport.js')
  
 const registerUser = asyncHandler(async (req, res) => {
-    const { username, email, password, googleId } = req.body;
+    const { username, email, password, googleId, paid } = req.body;
   
     if ((!username || !email || !password) && !googleId)  {
       res.status(400);
@@ -26,6 +26,7 @@ const registerUser = asyncHandler(async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      paid
     });
   
     if (user) {
@@ -34,6 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
         _id: user.id,
         username: user.username,
         email: user.email,
+        paid: user.paid,
         token: generateToken(user._id),
       });
     } else {
@@ -69,8 +71,22 @@ const registerUser = asyncHandler(async (req, res) => {
         _id: user.id,
         username: user.username,
         email: user.email,
+        paid: user.paid,
         token: generateToken(user._id),
       });
+  });
+
+  const updateUser = asyncHandler( async( req, res ) => {
+    const user = await User.findById(req.params.id);
+  
+    if(!user) {
+        res.status(404);
+        throw new Error("User does not exist");
+    }else{
+      const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      res.status(200).json(updatedUser);
+    }
+  
   });
 
   // Log in user with Google
@@ -81,7 +97,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // Callback for Google authentication
  const googleAuthCallback = passport.authenticate("google", {
     failureRedirect: "/login",
-    successRedirect: "/dashboard",
+    successRedirect: "/credentials",
   });
 
   const getCredentials = asyncHandler(async (req, res) => {
@@ -94,4 +110,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, loginUser, loginWithGoogle, googleAuthCallback, getCredentials }
+  module.exports = { registerUser, loginUser, updateUser, loginWithGoogle, googleAuthCallback, getCredentials }
