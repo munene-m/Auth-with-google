@@ -16,7 +16,12 @@ passport.use(new GoogleStrategy({
             email: profile.email,
             username: profile.displayName,
         })
-        return done(null, user);
+        return done(null, {
+          id: user._id,
+          email: user.email,
+          username: user.username,
+          googleId: user.googleId
+        });
     } catch (error) {
         return done(error)
     }
