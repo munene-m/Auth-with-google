@@ -23,15 +23,8 @@ app.use(bodyParser.json())
 //     res.sendFile('index.html')
 // })
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({
-    url: process.env.MONGO_CONNECTION_URL,
-    collection: 'user_sessions',
-  }),
-}));
+const store = new MongoStore({ mongoUrl: process.env.MONGO_CONNECTION_URL });
+app.use(session({ secret: process.env.SESSION_SECRET, store: store }));
   
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
