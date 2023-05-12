@@ -3,6 +3,7 @@ const app = express()
 const cors = require("cors")
 const path = require('path')
 const dotenv = require("dotenv")
+const MongoStore = require('connect-mongo')(session);
 const { connectDB } = require("./config/db")
 const bodyParser = require("body-parser")
 const session = require('express-session')
@@ -21,12 +22,18 @@ app.use(bodyParser.json())
 // app.get('/', (req, res) => {
 //     res.sendFile('index.html')
 // })
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    cookie: {secure: false}
-  }));
+
+const sessionOptions = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({
+    url: process.env.MONGO-CONNECTION_URL,
+    collection: 'user_sessions',
+  }),
+};
+
+app.use(session(sessionOptions));
   
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
