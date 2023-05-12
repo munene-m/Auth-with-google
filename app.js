@@ -23,7 +23,7 @@ app.use(bodyParser.json())
 //     res.sendFile('index.html')
 // })
 
-const sessionOptions = {
+app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -31,9 +31,7 @@ const sessionOptions = {
     url: process.env.MONGO-CONNECTION_URL,
     collection: 'user_sessions',
   }),
-};
-
-app.use(session(sessionOptions));
+}));
   
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
