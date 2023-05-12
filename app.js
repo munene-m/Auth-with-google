@@ -28,7 +28,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: new MongoStore({
-    url: process.env.MONGO-CONNECTION_URL,
+    url: process.env.MONGO_CONNECTION_URL,
     collection: 'user_sessions',
   }),
 }));
