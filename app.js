@@ -4,7 +4,7 @@ const cors = require("cors")
 const path = require('path')
 const dotenv = require("dotenv")
 const session = require('express-session')
-const { default: MongoStore } = require('connect-mongo')(session)
+const { MongoStore } = require('connect-mongo')(session)
 const { connectDB } = require("./config/db")
 const bodyParser = require("body-parser")
 const authRoute = require('./routes/authRoute')
@@ -23,16 +23,28 @@ app.use(bodyParser.json())
 //     res.sendFile('index.html')
 // })
 
-
+const sessionStore = new MongoStore({ 
+  url: process.env.MONGO_CONNECTION_URL,
+  collection: 'user_sessions',
+  ttl: 60 * 60 * 24 // session will expire after 1 day (in seconds)
+});
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({
-    url: process.env.MONGO_CONNECTION_URL,
-    collection: 'user_sessions',
-  }),
+  store: sessionStore
 }));
+
+
+// app.use(session({
+//   secret: process.env.SESSION_SECRET,
+//   resave: false,
+//   saveUninitialized: false,
+//   store: new MongoStore({
+//     url: process.env.MONGO_CONNECTION_URL,
+//     collection: 'user_sessions',
+//   }),
+// }));
   
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
