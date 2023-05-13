@@ -23,11 +23,11 @@ app.use(bodyParser.json())
 //     res.sendFile('index.html')
 // })
 
-const sessionStore = new MongoStore({ 
-  url: process.env.MONGO_CONNECTION_URL,
-  collection: 'user_sessions',
-  ttl: 60 * 60 * 24 // session will expire after 1 day (in seconds)
-});
+// const sessionStore = new MongoStore({ 
+//   url: process.env.MONGO_CONNECTION_URL,
+//   collection: 'user_sessions',
+//   ttl: 60 * 60 * 24 // session will expire after 1 day (in seconds)
+// });
 
 
 app.use(session({
