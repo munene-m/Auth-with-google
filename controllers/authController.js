@@ -97,7 +97,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // Callback for Google authentication
  const googleAuthCallback = passport.authenticate("google", {
     failureRedirect: "/login",
-    successRedirect: "/credentials",
+    successRedirect: "/auth/credentials",
   });
 
   const getCredentials = asyncHandler(async (req, res) => {
