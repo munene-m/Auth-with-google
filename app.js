@@ -5,6 +5,7 @@ const path = require('path')
 const dotenv = require("dotenv")
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
+const helmet = require('helmet');
 const { connectDB } = require("./config/db")
 const bodyParser = require("body-parser")
 const authRoute = require('./routes/authRoute')
@@ -30,6 +31,15 @@ app.use(bodyParser.json())
 // });
 
 
+// Set the Content Security Policy header
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+    },
+  })
+);
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
