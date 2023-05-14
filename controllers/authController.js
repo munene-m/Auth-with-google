@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken")
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt')
 const passport = require('passport')
+const {protect} = require('../middleware/authMiddleware')
 require('../passport.js')
  
 const registerUser = asyncHandler(async (req, res) => {
@@ -95,10 +96,11 @@ const registerUser = asyncHandler(async (req, res) => {
   });
   
   // Callback for Google authentication
- const googleAuthCallback = passport.authenticate("google", {
+ const googleAuthCallback = [ passport.authenticate("google", {
     failureRedirect: "/login",
     successRedirect: "/auth/credentials",
-  });
+  }),
+  protect ]
 
   const getCredentials = asyncHandler(async (req, res) => {
     res.status(200).json(req.user);
