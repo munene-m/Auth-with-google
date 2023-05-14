@@ -34,8 +34,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  ttl: 60 * 60 * 24, // session will expire after 1 day (in seconds)
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_CONNECTION_URL})
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_CONNECTION_URL}),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // cookie will expire after 1 day (in milliseconds)
+  },
 }));
   
 app.use("/auth", authRoute)
