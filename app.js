@@ -18,18 +18,6 @@ app.use(express.json())
 app.use(cors())
 app.use(express.urlencoded({extended:false}))
 app.use(bodyParser.json())
-// app.use(express.static (path.join (__dirname, 'client')))
-
-// app.get('/', (req, res) => {
-//     res.sendFile('index.html')
-// })
-
-// const sessionStore = new MongoStore({ 
-//   url: process.env.MONGO_CONNECTION_URL,
-//   collection: 'user_sessions',
-//   ttl: 60 * 60 * 24 // session will expire after 1 day (in seconds)
-// });
-
 
 // Set the Content Security Policy header
 app.use(
