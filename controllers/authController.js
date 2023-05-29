@@ -7,7 +7,7 @@ const {protect} = require('../middleware/authMiddleware')
 require('../passport.js')
  
 const registerUser = asyncHandler(async (req, res) => {
-    const { username, email, password, googleId, paid } = req.body;
+    const { username, email, password, googleId, paid, isAdmin } = req.body;
   
     if ((!username || !email || !password) && !googleId)  {
       res.status(400);
@@ -27,7 +27,8 @@ const registerUser = asyncHandler(async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      paid
+      paid,
+      isAdmin
     });
   
     if (user) {
@@ -37,6 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username: user.username,
         email: user.email,
         paid: user.paid,
+        isAdmin: user.isAdmin,
         token: generateToken(user._id),
       });
     } else {
@@ -63,7 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
         }
     } else {
         user = await User.findOne({ email })
-        if(!user || !(bcrypt.compare(password, user.password))){
+        if(!user || !(await bcrypt.compare(password, user.password))){
             res.status(400)
             throw new Error("The credentials you entered are invalid");
         }        
@@ -73,6 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username: user.username,
         email: user.email,
         paid: user.paid,
+        isAdmin: user.isAdmin,
         token: generateToken(user._id),
       });
   });
