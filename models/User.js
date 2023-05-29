@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
   paid: {
     type: Boolean,
     default: false
+  },
+  isAdmin: {
+    type:Boolean,
+    default: false
   }
 });
 
