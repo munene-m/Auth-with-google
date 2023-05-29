@@ -9,10 +9,26 @@ const adminSchema = new mongoose.Schema({
         required: true
     },
     match: {
+        type: Array,
+        required: true
+    },
+    teamAIcon: {
         type: String,
         required: true
     },
-    position: {
+    teamBIcon: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: String,
+        required: true
+    },
+    league: {
+        type: String,
+        required: true
+    },
+    leagueIcon: {
         type: String,
         required: true
     },
