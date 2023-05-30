@@ -13,13 +13,16 @@ const adminSchema = new mongoose.Schema({
         required: true
     },
     teamA: {
-        type: String
+        type: String,
+        required: true
     },
     teamAscore: {
-        type: String,
+        type: Number,
+        required: true
     },
     teamBscore: {
-        type: String,
+        type: Number,
+        required: true
     },   
     teamB: {
         type: String,
