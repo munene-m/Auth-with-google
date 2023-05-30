@@ -12,6 +12,19 @@ const adminSchema = new mongoose.Schema({
         type: Array,
         required: true
     },
+    teamA: {
+        type: String
+    },
+    teamAscore: {
+        type: String,
+    },
+    teamBscore: {
+        type: String,
+    },   
+    teamB: {
+        type: String,
+    },
+    
     teamAIcon: {
         type: String,
         required: true

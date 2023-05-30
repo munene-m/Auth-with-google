@@ -22,7 +22,7 @@ cloudinary.config({
 })
 
 const createPrediction = asyncHandler(async (req, res) => {
-  const { time, tip, match, formation, league, category } = req.body;
+  const { time, tip, match, formation, league, category, teamA, teamB, teamAscore, teamBscore } = req.body;
 
   const leagueIcon = req.files['leagueIcon'][0];
   const teamAIcon = req.files['teamAIcon'][0];
@@ -54,7 +54,7 @@ const createPrediction = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, match, formation, league, category,
+      time, tip, match, formation, league, category,teamA, teamB, teamAscore, teamBscore,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -66,6 +66,10 @@ const createPrediction = asyncHandler(async (req, res) => {
       tip: prediction.tip,
       match: prediction.match,
       formation: prediction.formation,
+      teamA: prediction.teamA,
+      teamB: prediction.teamB,
+      teamAscore: prediction.teamAscore,
+      teamBscore: prediction. teamBscore,
       league: prediction.league,
       category: prediction.category,
       leagueIcon: prediction.leagueIcon,
@@ -86,7 +90,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("The prediction you tried to update does not exist");
   } else {
-    const { time, tip, match, formation, league, category } = req.body;
+    const { time, tip, match, formation, league, category, teamA, teamB, teamAscore, teamBscore } = req.body;
     let leagueIcon = prediction.leagueIcon;
     let teamAIcon = prediction.teamAIcon;
     let teamBIcon = prediction.teamBIcon;
@@ -110,7 +114,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
-      { time, tip, match, formation, league, category, leagueIcon, teamAIcon, teamBIcon },
+      { time, tip, match, formation, league, category, leagueIcon, teamAIcon, teamBIcon, teamA, teamB, teamAscore, teamBscore },
       { new: true }
     );
 
