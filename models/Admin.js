@@ -8,8 +8,8 @@ const adminSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    match: {
-        type: Array,
+    status: {
+        type: String,
         required: true
     },
     teamA: {
@@ -45,8 +45,12 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    formation: {
-        type: String,
+    formationA: {
+        type: Array,
+        required: true
+    },
+    formationB: {
+        type: Array,
         required: true
     }
 },{timestamps: true})
