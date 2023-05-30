@@ -93,6 +93,28 @@ const registerUser = asyncHandler(async (req, res) => {
   
   });
 
+  const reset = asyncHandler(async (req, res) => {
+    const { email, password } = req.body
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(404);
+      throw new Error('User does not exist');
+    }
+      // Hash the new password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Update the user's password
+  user.password = hashedPassword;
+  const updatedUser = await user.save();
+
+
+  // Exclude the password field from the response
+  const userWithoutPassword = await User.findById(updatedUser._id).select('-password');
+
+  res.status(200).json(userWithoutPassword);
+  })
+
   // Log in user with Google
  const loginWithGoogle = passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -115,4 +137,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, loginUser, updateUser, loginWithGoogle, googleAuthCallback, getCredentials }
+  module.exports = { registerUser, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials }
