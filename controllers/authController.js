@@ -46,6 +46,47 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new Error("Invalid credentials");
     }
   });
+
+  const registerAdmin = asyncHandler(async (req, res) => {
+    const { username, email, password, googleId, paid, isAdmin } = req.body;
+  
+    if ((!username || !email || !password) && !googleId)  {
+      res.status(400);
+      throw new Error("Please enter all the required fields");
+    }
+    const userExists = await User.findOne({ email });
+  
+    //check if user account exists in the database
+    if (userExists) {
+      res.status(400);
+      throw new Error("User already exists!");
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      paid,
+      isAdmin: true
+    });
+  
+    if (user) {
+      res.status(201);
+      res.json({
+        _id: user.id,
+        username: user.username,
+        email: user.email,
+        paid: user.paid,
+        isAdmin: user.isAdmin,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(400);
+      throw new Error("Invalid credentials");
+    }
+  });
   
   //Log in user
   const loginUser = asyncHandler(async (req, res) => {
@@ -65,7 +106,7 @@ const registerUser = asyncHandler(async (req, res) => {
         }
     } else {
         user = await User.findOne({ email })
-        if(!user || !(await bcrypt.compare(password, user.password))){
+        if(!user || !(bcrypt.compare(password, user.password))){
             res.status(400)
             throw new Error("The credentials you entered are invalid");
         }        
@@ -137,4 +178,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials }
+  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials }
