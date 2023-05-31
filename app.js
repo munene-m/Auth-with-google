@@ -21,12 +21,13 @@ app.use(bodyParser.json())
 
 // Set the Content Security Policy header
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-    },
-  })
+  // helmet.contentSecurityPolicy({
+  //   directives: {
+  //     defaultSrc: ["'self'"],
+  //     scriptSrc: ["'self'", "'unsafe-inline'"],
+  //   },
+  // })
+  helmet()
 );
 app.use(session({
   secret: process.env.SESSION_SECRET,
