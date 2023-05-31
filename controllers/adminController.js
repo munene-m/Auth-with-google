@@ -54,7 +54,7 @@ const createPrediction = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, match, formationA, formationB, league, category,teamA, teamB, teamAscore, teamBscore,
+      time, tip, status, formationA, formationB, league, category,teamA, teamB, teamAscore, teamBscore,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
