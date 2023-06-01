@@ -1,8 +1,9 @@
 const express = require('express')
-const { loginUser, registerUser, registerAdmin, getCredentials, loginWithGoogle, reset, googleAuthCallback, updateUser } = require("../controllers/authController");
-const { protect } = require("../middleware/authMiddleware")
+const { loginUser, registerUser, registerAdmin, getCredentials, getGoogleUserCredentials, loginWithGoogle, reset, googleAuthCallback, updateUser } = require("../controllers/authController");
+const { protect,googleProtect } = require("../middleware/authMiddleware")
 const router = express.Router();
 router.route("/credentials").get(protect,getCredentials)
+router.route("/googleCredentials").get(googleProtect, getGoogleUserCredentials)
 router.route("/register").post(registerUser)
 router.route("/register-admin").post(registerAdmin)
 router.route("/login").post(loginUser)
