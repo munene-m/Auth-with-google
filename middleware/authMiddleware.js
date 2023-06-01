@@ -21,14 +21,4 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-const googleProtect = (req, res, next) => {
-  if (req.session.user) {
-    // User session exists, proceed to the next middleware
-    next();
-  } else {
-    // User session doesn't exist, send 401 Unauthorized response
-    res.status(401).json({ message: 'Unauthorized' });
-  }
-};
-
-module.exports = { protect, googleProtect }
+module.exports = { protect }
