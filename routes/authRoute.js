@@ -3,7 +3,7 @@ const { loginUser, registerUser, registerAdmin, getCredentials, getGoogleUserCre
 const { protect,googleProtect } = require("../middleware/authMiddleware")
 const router = express.Router();
 router.route("/credentials").get(protect,getCredentials)
-router.route("/googleCredentials").get(googleProtect, getGoogleUserCredentials)
+router.route("/googleCredentials").get(getGoogleUserCredentials)
 router.route("/register").post(registerUser)
 router.route("/register-admin").post(registerAdmin)
 router.route("/login").post(loginUser)
