@@ -194,8 +194,15 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(200).json(req.user);
   });
   const getGoogleUserCredentials = asyncHandler(async (req, res) => {
-    res.status(200).json(req.user)
-  })
+    if (req.session.user) {
+      // User session exists, send the user credentials
+      res.status(200).json(req.session.user);
+    } else {
+      // User session doesn't exist, send an error response
+      res.status(401).json({ message: 'User session not found' });
+    }
+  });
+  
   
   const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
