@@ -7,68 +7,84 @@ const {protect} = require('../middleware/authMiddleware')
 require('../passport.js')
  
 const registerUser = asyncHandler(async (req, res) => {
-    const { username, email, password, googleId, paid, isAdmin } = req.body;
-  
-    if ((!username || !email || !password) && !googleId)  {
-      res.status(400);
-      throw new Error("Please enter all the required fields");
-    }
-    const userExists = await User.findOne({ email });
-  
-    //check if user account exists in the database
-    if (userExists) {
-      res.status(400);
-      throw new Error("User already exists!");
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-  
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      paid,
-      isAdmin
-    });
-  
-    if (user) {
-      res.status(201);
-      res.json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        paid: user.paid,
-        isAdmin: user.isAdmin,
-        token: generateToken(user._id),
-      });
-    } else {
-      res.status(400);
-      throw new Error("Invalid credentials");
-    }
+  const { username, email, password, confirmPassword, country, googleId, paid } = req.body;
+
+  if ((!username || !email || !password || !confirmPassword || !country) && !googleId)  {
+    res.status(400);
+    throw new Error("Please enter all the required fields");
+  }
+
+  const userExists = await User.findOne({ email });
+
+  // Check if user account exists in the database
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists!");
+  }
+
+  if (password !== confirmPassword) {
+    res.status(400);
+    throw new Error("Passwords do not match");
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  const user = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+    paid,
+    country
   });
 
+  if (user) {
+    res.status(201);
+    res.json({
+      _id: user.id,
+      username: user.username,
+      email: user.email,
+      paid: user.paid,
+      country: user.country,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid credentials");
+  }
+});
+
+
   const registerAdmin = asyncHandler(async (req, res) => {
-    const { username, email, password, googleId, paid, isAdmin } = req.body;
+    const { username, email, password, confirmPassword, country, googleId, paid, isAdmin } = req.body;
   
-    if ((!username || !email || !password) && !googleId)  {
+    if ((!username || !email || !password || !confirmPassword || !country) && !googleId)  {
       res.status(400);
       throw new Error("Please enter all the required fields");
     }
+  
     const userExists = await User.findOne({ email });
   
-    //check if user account exists in the database
+    // Check if user account exists in the database
     if (userExists) {
       res.status(400);
       throw new Error("User already exists!");
     }
+  
+    if (password !== confirmPassword) {
+      res.status(400);
+      throw new Error("Passwords do not match");
+    }
+  
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
   
     const user = await User.create({
       username,
       email,
       password: hashedPassword,
       paid,
+      country,
       isAdmin: true
     });
   
@@ -79,6 +95,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username: user.username,
         email: user.email,
         paid: user.paid,
+        country: user.country,
         isAdmin: user.isAdmin,
         token: generateToken(user._id),
       });
@@ -87,6 +104,7 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new Error("Invalid credentials");
     }
   });
+  
   
   //Log in user
   const loginUser = asyncHandler(async (req, res) => {
@@ -164,13 +182,20 @@ const registerUser = asyncHandler(async (req, res) => {
   // Callback for Google authentication
  const googleAuthCallback = [ passport.authenticate("google", {
     failureRedirect: "/login",
-    successRedirect: "/auth/credentials",
+    successRedirect: "/auth/googleCredentials",
   }),
-  protect ]
+  (req, res) => {
+    // Store session information
+    req.session.user = req.user;
+    res.redirect('/auth/googleCredentials');
+  }]
 
   const getCredentials = asyncHandler(async (req, res) => {
     res.status(200).json(req.user);
   });
+  const getGoogleUserCredentials = asyncHandler(async (req, res) => {
+    res.status(200).json(req.user)
+  })
   
   const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -178,4 +203,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials }
+  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials, getGoogleUserCredentials }
