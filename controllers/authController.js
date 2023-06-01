@@ -183,24 +183,13 @@ const registerUser = asyncHandler(async (req, res) => {
  const googleAuthCallback = [ passport.authenticate("google", {
     failureRedirect: "/login",
     successRedirect: "/auth/googleCredentials",
-  }),
-  (req, res) => {
-    // Store session information
-    req.session.user = req.user;
-    res.redirect('/auth/googleCredentials');
-  }]
+  })]
 
   const getCredentials = asyncHandler(async (req, res) => {
     res.status(200).json(req.user);
   });
-  const getGoogleUserCredentials = asyncHandler(async (req, res) => {
-    if (req.session.user) {
-      // User session exists, send the user credentials
-      res.status(200).json(req.session.user);
-    } else {
-      // User session doesn't exist, send an error response
-      res.status(401).json({ message: 'User session not found' });
-    }
+  const redirectUser = asyncHandler(async (req, res) => {
+    res.status(200).json({ redirectTo: '/' })
   });
   
   
@@ -210,4 +199,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials, getGoogleUserCredentials }
+  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials, redirectUser }
