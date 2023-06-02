@@ -35,6 +35,9 @@ const sportSchema = new mongoose.Schema({
   gamePrediction: {
     type: String,
     required: true
+  },
+  sport: {
+    type:String
   }
 });
 

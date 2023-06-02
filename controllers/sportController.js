@@ -22,7 +22,7 @@ cloudinary.config({
 })
 
 const createPrediction = asyncHandler(async (req, res) => {
-    const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction } = req.body;
+    const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction, sport } = req.body;
   
     const playerALogo = req.files['playerALogo'][0];
     const playerBLogo = req.files['playerBLogo'][0];
@@ -47,7 +47,7 @@ const createPrediction = asyncHandler(async (req, res) => {
       });
   
       const prediction = await Sport.create({
-        playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction,
+        playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction, sport,
         playerALogo: result.secure_url,
         playerBLogo: result2.secure_url
       });
@@ -62,7 +62,8 @@ const createPrediction = asyncHandler(async (req, res) => {
         playerBTime: prediction.playerBTime,
         playerALogo: prediction.playerALogo,
         playerBLogo: prediction.playerBLogo,
-        gamePrediction: prediction.gamePrediction
+        gamePrediction: prediction.gamePrediction,
+        sport: prediction.sport
       });
     } catch (error) {
       console.log(error);
@@ -77,7 +78,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("The prediction you tried to update does not exist");
     } else {
-      const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction } = req.body;
+      const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction, sport } = req.body;
       let playerALogo = prediction.playerALogo;
       let playerBLogo = prediction.playerBLogo;
   
@@ -98,7 +99,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
   
       const updatedPrediction = await Sport.findByIdAndUpdate(
         req.params.id,
-        { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction, playerALogo, playerBLogo },
+        { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction, playerALogo, playerBLogo, sport },
         { new: true }
       );
   
