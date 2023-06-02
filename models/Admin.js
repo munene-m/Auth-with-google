@@ -6,7 +6,6 @@ const adminSchema = new mongoose.Schema({
     },
     tip: {
         type: Number,
-        required: true
     },
     status: {
         type: String,
@@ -26,6 +25,12 @@ const adminSchema = new mongoose.Schema({
     },   
     teamB: {
         type: String,
+    },
+    teamAPosition: {
+        type:String
+    },
+    teamBPosition: {
+        type: String
     },
     
     teamAIcon: {
