@@ -43,11 +43,9 @@ const adminSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: true
     },
     league: {
-        type: String,
-        required: true
+        type: String
     },
     leagueIcon: {
         type: String,
