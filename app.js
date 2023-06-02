@@ -10,6 +10,7 @@ const { connectDB } = require("./config/db")
 const bodyParser = require("body-parser")
 const authRoute = require('./routes/authRoute')
 const adminRoute = require('./routes/adminRoute')
+const sportRoute = require("./routes/sportRoute")
 const PORT = 3000
 
 connectDB()
@@ -33,6 +34,7 @@ app.use(session({
   
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
+app.use("/sports", sportRoute)
 
 
 app.get('/', (req, res) => {
