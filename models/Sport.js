@@ -12,10 +12,6 @@ const sportSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  playerATime: {
-    type: String,
-    required: true
-  },
   playerB: {
     type: String,
     required: true,
@@ -28,7 +24,7 @@ const sportSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  playerBTime: {
+  time: {
     type: String,
     required: true
   },
