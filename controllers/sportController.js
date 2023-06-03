@@ -22,7 +22,7 @@ cloudinary.config({
 })
 
 const createPrediction = asyncHandler(async (req, res) => {
-    const { playerA, playerALeague, time, playerB, playerBLeague, gamePrediction } = req.body;
+    const { playerA, league, time, playerB,  gamePrediction } = req.body;
     const sport = req.params.sport;
   
     const playerALogo = req.files['playerALogo'][0];
@@ -48,7 +48,7 @@ const createPrediction = asyncHandler(async (req, res) => {
       });
   
       const prediction = await Sport.create({
-        playerA, playerALeague, time, playerB, playerBLeague, gamePrediction, sport,
+        playerA,  time, playerB, league, gamePrediction, sport,
         playerALogo: result.secure_url,
         playerBLogo: result2.secure_url
       });
@@ -56,10 +56,9 @@ const createPrediction = asyncHandler(async (req, res) => {
       res.status(201).json({
         _id: prediction._id,
         playerA: prediction.playerA,
-        playerALeague: prediction.playerALeague,
+        league: prediction.league,
         time: prediction.time,
         playerB: prediction.playerB,
-        playerBLeague: prediction.playerBLeague,
         playerALogo: prediction.playerALogo,
         playerBLogo: prediction.playerBLogo,
         gamePrediction: prediction.gamePrediction,
@@ -78,7 +77,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("The prediction you tried to update does not exist");
     } else {
-      const { playerA, playerALeague, playerB, playerBLeague, time, gamePrediction } = req.body;
+      const { playerA, league, playerB, time, gamePrediction } = req.body;
       const sport = req.params.sport;
       let playerALogo = prediction.playerALogo;
       let playerBLogo = prediction.playerBLogo;
@@ -100,7 +99,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
   
       const updatedPrediction = await Sport.findByIdAndUpdate(
         req.params.id,
-        { playerA, playerALeague, playerB, playerBLeague, time, gamePrediction, playerALogo, playerBLogo, sport },
+        { playerA, playerB, league, time, gamePrediction, playerALogo, playerBLogo, sport },
         { new: true }
       );
   

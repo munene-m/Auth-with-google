@@ -8,10 +8,6 @@ const sportSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
-  playerALeague: {
-    type: String,
-    required: true
-  },
   playerB: {
     type: String,
     required: true,
@@ -20,7 +16,7 @@ const sportSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
-  playerBLeague: {
+  league: {
     type: String,
     required: true
   },
