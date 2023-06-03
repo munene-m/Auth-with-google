@@ -37,7 +37,8 @@ const sportSchema = new mongoose.Schema({
     required: true
   },
   sport: {
-    type:String
+    type: String,
+    trim: true
   }
 });
 

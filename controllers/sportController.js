@@ -22,7 +22,8 @@ cloudinary.config({
 })
 
 const createPrediction = asyncHandler(async (req, res) => {
-    const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction, sport } = req.body;
+    const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction } = req.body;
+    const sport = req.params.sport;
   
     const playerALogo = req.files['playerALogo'][0];
     const playerBLogo = req.files['playerBLogo'][0];
@@ -78,7 +79,8 @@ const updatePrediction = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("The prediction you tried to update does not exist");
     } else {
-      const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction, sport } = req.body;
+      const { playerA, playerALeague, playerATime, playerB, playerBLeague, playerBTime, gamePrediction } = req.body;
+      const sport = req.params.sport;
       let playerALogo = prediction.playerALogo;
       let playerBLogo = prediction.playerBLogo;
   
@@ -117,6 +119,20 @@ const updatePrediction = asyncHandler(async (req, res) => {
     }
 })
 
+const getPredictionFromSport = asyncHandler(async (req, res) => {
+  try {
+    const prediction = await Sport.find({sport: decodeURIComponent(req.params.value)})
+    if(prediction.length === 0) {
+        res.status(400)
+        throw new Error("Prediction not found")
+    } else {
+      res.status(200).json(prediction)
+    }
+} catch (err) {
+console.log(err);        
+}
+})
+
 const getPredictions = asyncHandler(async (req, res) => {
     try {
         const predictions = await Sport.find()
@@ -144,4 +160,4 @@ const deletePrediction = asyncHandler(async (req, res) => {
     }
 })
 
-  module.exports = { createPrediction, updatePrediction, getPrediction, getPredictions, deletePrediction }
+  module.exports = { createPrediction, updatePrediction, getPrediction, getPredictionFromSport, getPredictions, deletePrediction }
