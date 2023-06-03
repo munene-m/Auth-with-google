@@ -7,9 +7,9 @@ const { protect } = require('../middleware/authMiddleware')
 
 router.route("/create/:sport").post(protect, upload.fields([{ name: 'playerALogo' },{ name: 'playerBLogo' }]), createPrediction);
 router.route("/update/:id").put(protect, upload.fields([{ name: 'playerALogo' },{ name: 'playerBLogo' }]), updatePrediction)
-router.route("/:id").get(protect, getPrediction)
-router.route("/").get(protect, getPredictions)
-router.route("/sport/:value").get(protect, getPredictionFromSport)
+router.route("/:id").get(getPrediction)
+router.route("/").get(getPredictions)
+router.route("/sport/:value").get(getPredictionFromSport)
 router.route("/delete/:id").delete(protect, deletePrediction)
 
 module.exports = router
