@@ -58,6 +58,14 @@ const adminSchema = new mongoose.Schema({
     formationB: {
         type: Array,
         required: true
+    },
+    vip: {
+        type:String,
+        trim: true
+    },
+    freeTip: {
+        type: String,
+        trim: true
     }
 },{timestamps: true})
 

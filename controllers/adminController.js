@@ -85,6 +85,138 @@ const createPrediction = asyncHandler(async (req, res) => {
   }
 });
 
+const createVipPrediction = asyncHandler(async (req, res) => {
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const vip = req.params.vip
+
+  const leagueIcon = req.files['leagueIcon'][0];
+  const teamAIcon = req.files['teamAIcon'][0];
+  const teamBIcon = req.files['teamBIcon'][0];
+
+  // Validate the presence of file fields
+  if (!leagueIcon || !teamAIcon || !teamBIcon) {
+    res.status(400).json({ error: "All image files are required" });
+    return;
+  }
+
+  try {
+    const result = await cloudinary.uploader.upload(leagueIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale',
+    });
+
+    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const prediction = await Admin.create({
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, vip,
+      leagueIcon: result.secure_url,
+      teamAIcon: result2.secure_url,
+      teamBIcon: result3.secure_url
+    });
+
+    res.status(201).json({
+      _id: prediction._id,
+      time: prediction.time,
+      tip: prediction.tip,
+      status: prediction.status,
+      formationA: prediction.formationA,
+      formationB: prediction.formationB,
+      teamA: prediction.teamA,
+      teamB: prediction.teamB,
+      teamAscore: prediction.teamAscore,
+      teamBscore: prediction. teamBscore,
+      teamAPosition: prediction.teamAPosition,
+      teamBPosition: prediction.teamBPosition,
+      league: prediction.league,
+      category: prediction.category,
+      leagueIcon: prediction.leagueIcon,
+      teamAIcon: prediction.teamAIcon,
+      teamBIcon: prediction.teamBIcon,
+      vip: prediction.vip
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occurred when creating the prediction" });
+  }
+});
+
+const createFreeTip = asyncHandler(async (req, res) => {
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const freeTip = req.params.freeTip
+
+  const leagueIcon = req.files['leagueIcon'][0];
+  const teamAIcon = req.files['teamAIcon'][0];
+  const teamBIcon = req.files['teamBIcon'][0];
+
+  // Validate the presence of file fields
+  if (!leagueIcon || !teamAIcon || !teamBIcon) {
+    res.status(400).json({ error: "All image files are required" });
+    return;
+  }
+
+  try {
+    const result = await cloudinary.uploader.upload(leagueIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale',
+    });
+
+    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const prediction = await Admin.create({
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, freeTip,
+      leagueIcon: result.secure_url,
+      teamAIcon: result2.secure_url,
+      teamBIcon: result3.secure_url
+    });
+
+    res.status(201).json({
+      _id: prediction._id,
+      time: prediction.time,
+      tip: prediction.tip,
+      status: prediction.status,
+      formationA: prediction.formationA,
+      formationB: prediction.formationB,
+      teamA: prediction.teamA,
+      teamB: prediction.teamB,
+      teamAscore: prediction.teamAscore,
+      teamBscore: prediction. teamBscore,
+      teamAPosition: prediction.teamAPosition,
+      teamBPosition: prediction.teamBPosition,
+      league: prediction.league,
+      category: prediction.category,
+      leagueIcon: prediction.leagueIcon,
+      teamAIcon: prediction.teamAIcon,
+      teamBIcon: prediction.teamBIcon,
+      freeTip: prediction.freeTip
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occurred when creating the prediction" });
+  }
+});
+
 
 const updatePrediction = asyncHandler(async (req, res) => {
   const prediction = await Admin.findById(req.params.id);
@@ -94,6 +226,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
     throw new Error("The prediction you tried to update does not exist");
   } else {
     const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+    const vip = req.params.vip
     let leagueIcon = prediction.leagueIcon;
     let teamAIcon = prediction.teamAIcon;
     let teamBIcon = prediction.teamBIcon;
@@ -117,7 +250,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
-      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore },
+      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip },
       { new: true }
     );
 
@@ -134,6 +267,34 @@ const getPrediction = asyncHandler(async (req, res) => {
     } else {
         res.status(200).json(prediction)
     }
+})
+
+const getVipPredictions = asyncHandler(async (req, res) => {
+  try {
+    const prediction = await Admin.find({vip: decodeURIComponent(req.params.value)})
+    if(prediction.length === 0) {
+        res.status(400)
+        throw new Error("Prediction not found")
+    } else {
+      res.status(200).json(prediction)
+    }
+} catch (err) {
+console.log(err);        
+}
+})
+
+const getFreeTips= asyncHandler(async (req, res) => {
+  try {
+    const prediction = await Admin.find({freeTip: decodeURIComponent(req.params.value)})
+    if(prediction.length === 0) {
+        res.status(400)
+        throw new Error("Prediction not found")
+    } else {
+      res.status(200).json(prediction)
+    }
+} catch (err) {
+console.log(err);        
+}
 })
 
 const getPredictionInCategory = asyncHandler(async (req, res) => {
@@ -174,5 +335,5 @@ const deletePrediction = asyncHandler(async (req, res) => {
 })
 
 module.exports = {
-    createPrediction, updatePrediction, getPrediction, getPredictionInCategory, getPredictions, deletePrediction
+    createPrediction, createVipPrediction, createFreeTip, updatePrediction, getPrediction, getFreeTips, getVipPredictions, getPredictionInCategory, getPredictions, deletePrediction
 }
