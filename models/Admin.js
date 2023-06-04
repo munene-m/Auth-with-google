@@ -66,6 +66,14 @@ const adminSchema = new mongoose.Schema({
     freeTip: {
         type: String,
         trim: true
+    },
+    upcoming: {
+        type: String,
+        trim: true
+    },
+    betOfTheDay: {
+        type: String,
+        trim: true
     }
 },{timestamps: true})
 

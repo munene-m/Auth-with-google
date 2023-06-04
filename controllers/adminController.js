@@ -217,6 +217,138 @@ const createFreeTip = asyncHandler(async (req, res) => {
   }
 });
 
+const createUpcoming = asyncHandler(async (req, res) => {
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const upcoming = req.params.upcoming
+
+  const leagueIcon = req.files['leagueIcon'][0];
+  const teamAIcon = req.files['teamAIcon'][0];
+  const teamBIcon = req.files['teamBIcon'][0];
+
+  // Validate the presence of file fields
+  if (!leagueIcon || !teamAIcon || !teamBIcon) {
+    res.status(400).json({ error: "All image files are required" });
+    return;
+  }
+
+  try {
+    const result = await cloudinary.uploader.upload(leagueIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale',
+    });
+
+    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const prediction = await Admin.create({
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, upcoming,
+      leagueIcon: result.secure_url,
+      teamAIcon: result2.secure_url,
+      teamBIcon: result3.secure_url
+    });
+
+    res.status(201).json({
+      _id: prediction._id,
+      time: prediction.time,
+      tip: prediction.tip,
+      status: prediction.status,
+      formationA: prediction.formationA,
+      formationB: prediction.formationB,
+      teamA: prediction.teamA,
+      teamB: prediction.teamB,
+      teamAscore: prediction.teamAscore,
+      teamBscore: prediction. teamBscore,
+      teamAPosition: prediction.teamAPosition,
+      teamBPosition: prediction.teamBPosition,
+      league: prediction.league,
+      category: prediction.category,
+      leagueIcon: prediction.leagueIcon,
+      teamAIcon: prediction.teamAIcon,
+      teamBIcon: prediction.teamBIcon,
+      upcoming: prediction.upcoming
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occurred when creating the prediction" });
+  }
+});
+
+const createBetOfTheDay = asyncHandler(async (req, res) => {
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const betOfTheDay = req.params.betOfTheDay
+
+  const leagueIcon = req.files['leagueIcon'][0];
+  const teamAIcon = req.files['teamAIcon'][0];
+  const teamBIcon = req.files['teamBIcon'][0];
+
+  // Validate the presence of file fields
+  if (!leagueIcon || !teamAIcon || !teamBIcon) {
+    res.status(400).json({ error: "All image files are required" });
+    return;
+  }
+
+  try {
+    const result = await cloudinary.uploader.upload(leagueIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale',
+    });
+
+    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const prediction = await Admin.create({
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, betOfTheDay,
+      leagueIcon: result.secure_url,
+      teamAIcon: result2.secure_url,
+      teamBIcon: result3.secure_url
+    });
+
+    res.status(201).json({
+      _id: prediction._id,
+      time: prediction.time,
+      tip: prediction.tip,
+      status: prediction.status,
+      formationA: prediction.formationA,
+      formationB: prediction.formationB,
+      teamA: prediction.teamA,
+      teamB: prediction.teamB,
+      teamAscore: prediction.teamAscore,
+      teamBscore: prediction. teamBscore,
+      teamAPosition: prediction.teamAPosition,
+      teamBPosition: prediction.teamBPosition,
+      league: prediction.league,
+      category: prediction.category,
+      leagueIcon: prediction.leagueIcon,
+      teamAIcon: prediction.teamAIcon,
+      teamBIcon: prediction.teamBIcon,
+      betOfTheDay: prediction.betOfTheDay
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occurred when creating the prediction" });
+  }
+});
+
 
 const updatePrediction = asyncHandler(async (req, res) => {
   const prediction = await Admin.findById(req.params.id);
@@ -297,6 +429,34 @@ console.log(err);
 }
 })
 
+const getUpcoming = asyncHandler(async (req, res) => {
+  try {
+    const prediction = await Admin.find({upcoming: decodeURIComponent(req.params.value)})
+    if(prediction.length === 0) {
+        res.status(400)
+        throw new Error("Prediction not found")
+    } else {
+      res.status(200).json(prediction)
+    }
+} catch (err) {
+console.log(err);        
+}
+})
+
+const getBetOfTheDay = asyncHandler(async (req, res) => {
+  try {
+    const prediction = await Admin.find({betOfTheDay: decodeURIComponent(req.params.value)})
+    if(prediction.length === 0) {
+        res.status(400)
+        throw new Error("Prediction not found")
+    } else {
+      res.status(200).json(prediction)
+    }
+} catch (err) {
+console.log(err);        
+}
+})
+
 const getPredictionInCategory = asyncHandler(async (req, res) => {
   const prediction = await Admin.find({category: decodeURIComponent(req.params.value)})
   if(!prediction){
@@ -335,5 +495,5 @@ const deletePrediction = asyncHandler(async (req, res) => {
 })
 
 module.exports = {
-    createPrediction, createVipPrediction, createFreeTip, updatePrediction, getPrediction, getFreeTips, getVipPredictions, getPredictionInCategory, getPredictions, deletePrediction
+    createPrediction, createVipPrediction, createFreeTip, createBetOfTheDay, createUpcoming, updatePrediction, getPrediction, getBetOfTheDay,getUpcoming, getFreeTips, getVipPredictions, getPredictionInCategory, getPredictions, deletePrediction
 }

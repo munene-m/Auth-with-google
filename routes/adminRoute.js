@@ -2,13 +2,15 @@ const express = require('express')
 const router = express.Router()
 const multer = require("multer")
 const upload = multer({ dest: 'uploads/'})
-const { createPrediction, createVipPrediction, createFreeTip, updatePrediction, getPrediction, getPredictions,  getFreeTips, getVipPredictions, getPredictionInCategory, deletePrediction } = require('../controllers/adminController')
+const { createPrediction, createVipPrediction, createFreeTip, createUpcoming, createBetOfTheDay, updatePrediction, getPrediction, getBetOfTheDay, getUpcoming, getPredictions,  getFreeTips, getVipPredictions, getPredictionInCategory, deletePrediction } = require('../controllers/adminController')
 const { protect } = require('../middleware/authMiddleware')
 
 router.route("/").get(getPredictions)
 router.route("/:id").get(getPrediction)
 router.route("/tips/:value").get(getFreeTips)
 router.route("/vipPredictions/:value").get(getVipPredictions)
+router.route("/upcomingPredictions/:value").get(getUpcoming)
+router.route("/bet/:value").get(getBetOfTheDay)
 router.route("/create").post(
     protect, upload.fields([
       { name: 'leagueIcon' },
@@ -30,6 +32,22 @@ router.route("/create").post(
       { name: 'teamAIcon' },
       { name: 'teamBIcon' },
     ]), createFreeTip
+  );
+
+  router.route("/create/upcoming/:upcoming").post(
+    protect, upload.fields([
+      { name: 'leagueIcon' },
+      { name: 'teamAIcon' },
+      { name: 'teamBIcon' },
+    ]), createUpcoming
+  );
+
+  router.route("/create/bet/:betOfTheDay").post(
+    protect, upload.fields([
+      { name: 'leagueIcon' },
+      { name: 'teamAIcon' },
+      { name: 'teamBIcon' },
+    ]), createBetOfTheDay
   );
   
 router.route("/update/:id").put(protect, upload.fields([
