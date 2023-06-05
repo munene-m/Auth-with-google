@@ -188,6 +188,25 @@ const registerUser = asyncHandler(async (req, res) => {
   const getCredentials = asyncHandler(async (req, res) => {
     res.status(200).json(req.user);
   });
+
+  const getVipUsers = asyncHandler(async (req, res) => {
+    const vipUsers = await User.find({paid: true})
+    if(!vipUsers){
+      res.status(400).json("Vip users not found")
+    } else {
+      res.json(vipUsers)
+    }
+  })
+
+  const getUsers = asyncHandler(async (req, res) => {
+    const users = await User.find()
+    if(!users){
+      res.status(400).json("Users not found")
+    } else {
+      res.json(users)
+    }
+  })
+
   const redirectUser = asyncHandler(async (req, res) => {
     res.status(200).json({ redirectTo: '/' })
   });
@@ -199,4 +218,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getCredentials, redirectUser }
+  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getUsers, getVipUsers,getCredentials, redirectUser }
