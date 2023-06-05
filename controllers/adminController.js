@@ -350,6 +350,7 @@ const createBetOfTheDay = asyncHandler(async (req, res) => {
 });
 
 
+
 const updatePrediction = asyncHandler(async (req, res) => {
   const prediction = await Admin.findById(req.params.id);
 

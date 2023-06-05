@@ -18,6 +18,7 @@ router.route("/create").post(
       { name: 'teamBIcon' },
     ]), createPrediction
   );
+
   router.route("/create/:vip").post(
     protect, upload.fields([
       { name: 'leagueIcon' },
@@ -56,6 +57,6 @@ router.route("/update/:id").put(protect, upload.fields([
     { name: 'teamBIcon' },
   ]), updatePrediction)
 router.route("/delete/:id").delete(protect, deletePrediction)
-router.route("/prediction/:value").get(protect, getPredictionInCategory)
+router.route("/prediction/:value").get(getPredictionInCategory)
 
 module.exports = router
