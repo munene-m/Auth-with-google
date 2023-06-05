@@ -400,6 +400,8 @@ const getPrediction = asyncHandler(async (req, res) => {
     } else {
         res.status(200).json(prediction)
     }
+    return;
+
 })
 
 const getVipPredictions = asyncHandler(async (req, res) => {
@@ -411,6 +413,7 @@ const getVipPredictions = asyncHandler(async (req, res) => {
     } else {
       res.status(200).json(prediction)
     }
+    return;
 } catch (err) {
 console.log(err);        
 }
@@ -419,12 +422,13 @@ console.log(err);
 const getFreeTips= asyncHandler(async (req, res) => {
   try {
     const prediction = await Admin.find({freeTip: decodeURIComponent(req.params.value)})
-    if(prediction.length === 0) {
-        res.status(400)
-        throw new Error("Prediction not found")
+    if (prediction.length === 0) {
+      res.status(400);
+      throw new Error("Prediction not found");
     } else {
-      res.status(200).json(prediction)
+      res.status(200).json(prediction);
     }
+    return;
 } catch (err) {
 console.log(err);        
 }
@@ -439,6 +443,8 @@ const getUpcoming = asyncHandler(async (req, res) => {
     } else {
       res.status(200).json(prediction)
     }
+    return;
+
 } catch (err) {
 console.log(err);        
 }
@@ -453,6 +459,8 @@ const getBetOfTheDay = asyncHandler(async (req, res) => {
     } else {
       res.status(200).json(prediction)
     }
+    return;
+
 } catch (err) {
 console.log(err);        
 }
@@ -466,6 +474,8 @@ const getPredictionInCategory = asyncHandler(async (req, res) => {
   } else {
     res.status(200).json(prediction)
   }
+  return;
+
 })
 
 const getPredictions = asyncHandler(async (req, res) => {
@@ -476,7 +486,8 @@ const getPredictions = asyncHandler(async (req, res) => {
             throw new Error("There are no predictions")
         }
         res.status(200).json(predictions)
-    } catch (err) {
+    return;
+  } catch (err) {
     console.log(err);        
     }
 })
@@ -490,7 +501,8 @@ const deletePrediction = asyncHandler(async (req, res) => {
           }
         await Admin.findByIdAndDelete(req.params.id)
         res.status(200).json({id: req.params.id, message: "Prediction deleted"})
-    } catch (err) {
+    return;
+  } catch (err) {
         console.log(err);
     }
 })
