@@ -211,6 +211,20 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(200).json({ redirectTo: '/' })
   });
   
+  const deleteUser = asyncHandler(async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user) {
+            res.status(404);
+            throw new Error("Prediction not found");
+          }
+        await User.findByIdAndDelete(req.params.id)
+        res.status(200).json({id: req.params.id, message: "User account deleted"})
+    return;
+  } catch (err) {
+        console.log(err);
+    }
+})
   
   const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -218,4 +232,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getUsers, getVipUsers,getCredentials, redirectUser }
+  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getUsers, deleteUser, getVipUsers,getCredentials, redirectUser }

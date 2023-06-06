@@ -1,5 +1,5 @@
 const express = require('express')
-const { loginUser, registerUser, registerAdmin, getCredentials, getUsers, redirectUser,getVipUsers, loginWithGoogle, reset, googleAuthCallback, updateUser } = require("../controllers/authController");
+const { loginUser, registerUser, registerAdmin, getCredentials, getUsers, redirectUser,getVipUsers, deleteUser, loginWithGoogle, reset, googleAuthCallback, updateUser } = require("../controllers/authController");
 const { protect } = require("../middleware/authMiddleware")
 const router = express.Router();
 
@@ -14,6 +14,7 @@ router.route("/update/:id").put(updateUser)
 router.route("/reset").put(reset)
 router.route("/auth/google").get(loginWithGoogle)
 router.route("/auth/google/callback").get(googleAuthCallback);
+router.route("/delete/:id").delete(protect, deleteUser)
 
 module.exports = router
 
