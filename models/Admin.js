@@ -5,7 +5,7 @@ const adminSchema = new mongoose.Schema({
         required: true
     },
     tip: {
-        type: Number,
+        type: String,
     },
     status: {
         type: String,
