@@ -22,90 +22,109 @@ cloudinary.config({
 })
 
 const createPrediction = asyncHandler(async (req, res) => {
-    const { playerA, league, time, playerB,  gamePrediction } = req.body;
-    const sport = req.params.sport;
-  
-    const playerALogo = req.files['playerALogo'][0];
-    const playerBLogo = req.files['playerBLogo'][0];
-  
-    // Validate the presence of file fields
-    if (!playerALogo || !playerBLogo) {
-      res.status(400).json({ error: "All image files are required" });
-      return;
-    }
-  
-    try {
-      const result = await cloudinary.uploader.upload(playerALogo.path, {
-        width: 500,
-        height: 500,
-        crop: 'scale',
-      });
-  
-      const result2 = await cloudinary.uploader.upload(playerBLogo.path, {
-        width: 500,
-        height: 500,
-        crop: 'scale'
-      });
-  
-      const prediction = await Sport.create({
-        playerA,  time, playerB, league, gamePrediction, sport,
-        playerALogo: result.secure_url,
-        playerBLogo: result2.secure_url
-      });
-  
-      res.status(201).json({
-        _id: prediction._id,
-        playerA: prediction.playerA,
-        league: prediction.league,
-        time: prediction.time,
-        playerB: prediction.playerB,
-        playerALogo: prediction.playerALogo,
-        playerBLogo: prediction.playerBLogo,
-        gamePrediction: prediction.gamePrediction,
-        sport: prediction.sport
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "An error occurred when creating the prediction" });
-    }
-  });
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const sport = req.params.sport
+
+  const leagueIcon = req.files['leagueIcon'][0];
+  const teamAIcon = req.files['teamAIcon'][0];
+  const teamBIcon = req.files['teamBIcon'][0];
+
+  // Validate the presence of file fields
+  if (!leagueIcon || !teamAIcon || !teamBIcon) {
+    res.status(400).json({ error: "All image files are required" });
+    return;
+  }
+
+  try {
+    const result = await cloudinary.uploader.upload(leagueIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale',
+    });
+
+    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale'
+    });
+
+    const prediction = await Sport.create({
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, sport,
+      leagueIcon: result.secure_url,
+      teamAIcon: result2.secure_url,
+      teamBIcon: result3.secure_url
+    });
+
+    res.status(201).json({
+      _id: prediction._id,
+      time: prediction.time,
+      tip: prediction.tip,
+      status: prediction.status,
+      formationA: prediction.formationA,
+      formationB: prediction.formationB,
+      teamA: prediction.teamA,
+      teamB: prediction.teamB,
+      teamAscore: prediction.teamAscore,
+      teamBscore: prediction. teamBscore,
+      teamAPosition: prediction.teamAPosition,
+      teamBPosition: prediction.teamBPosition,
+      league: prediction.league,
+      sport: prediction.sport,
+      category: prediction.category,
+      leagueIcon: prediction.leagueIcon,
+      teamAIcon: prediction.teamAIcon,
+      teamBIcon: prediction.teamBIcon
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occurred when creating the prediction" });
+  }
+});
 
 const updatePrediction = asyncHandler(async (req, res) => {
-    const prediction = await Sport.findById(req.params.id);
-  
-    if (!prediction) {
-      res.status(400);
-      throw new Error("The prediction you tried to update does not exist");
-    } else {
-      const { playerA, league, playerB, time, gamePrediction } = req.body;
-      const sport = req.params.sport;
-      let playerALogo = prediction.playerALogo;
-      let playerBLogo = prediction.playerBLogo;
-  
-      if (req.file) {
-        // If a new image is uploaded, update it in Cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path, {
-          width: 500,
-          height: 500,
-          crop: "scale",
-          quality: 60
-        });
-        if (req.file.fieldname === "playerALogo") {
-            playerALogo = result.secure_url;
-        } else if (req.file.fieldname === "playerBLogo") {
-            playerBLogo = result.secure_url;
-        } 
+  const prediction = await Sport.findById(req.params.id);
+
+  if (!prediction) {
+    res.status(400);
+    throw new Error("The prediction you tried to update does not exist");
+  } else {
+    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+    let leagueIcon = prediction.leagueIcon;
+    let teamAIcon = prediction.teamAIcon;
+    let teamBIcon = prediction.teamBIcon;
+
+    if (req.file) {
+      // If a new image is uploaded, update it in Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        width: 500,
+        height: 500,
+        crop: "scale",
+        quality: 60
+      });
+      if (req.file.fieldname === "leagueIcon") {
+        leagueIcon = result.secure_url;
+      } else if (req.file.fieldname === "teamAIcon") {
+        teamAIcon = result.secure_url;
+      } else if (req.file.fieldname === "teamBIcon") {
+        teamBIcon = result.secure_url;
       }
-  
-      const updatedPrediction = await Sport.findByIdAndUpdate(
-        req.params.id,
-        { playerA, playerB, league, time, gamePrediction, playerALogo, playerBLogo, sport },
-        { new: true }
-      );
-  
-      res.status(200).json(updatedPrediction);
     }
-  });
+
+    const updatedPrediction = await Sport.findByIdAndUpdate(
+      req.params.id,
+      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore },
+      { new: true }
+    );
+
+    res.status(200).json(updatedPrediction);
+  }
+});
 
   const getPrediction = asyncHandler(async (req, res) => {
     const prediction = await Sport.findById(req.params.id)
@@ -151,7 +170,7 @@ const deletePrediction = asyncHandler(async (req, res) => {
             res.status(404);
             throw new Error("Prediction not found");
           }
-        await Admin.findByIdAndDelete(req.params.id)
+        await Sport.findByIdAndDelete(req.params.id)
         res.status(200).json({id: req.params.id, message: "Prediction deleted"})
     } catch (err) {
         console.log(err);

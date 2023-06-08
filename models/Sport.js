@@ -1,38 +1,69 @@
 const mongoose = require("mongoose");
 const sportSchema = new mongoose.Schema({
-  playerA: {
-    type: String,
-    required: true,
-  },
-  playerALogo: {
-    type: String,
-    // required: true,
-  },
-  playerB: {
-    type: String,
-    required: true,
-  },
-  playerBLogo: {
-    type: String,
-    // required: true,
-  },
-  league: {
-    type: String,
-    required: true
-  },
   time: {
     type: String,
     required: true
-  },
-  gamePrediction: {
+},
+tip: {
+    type: String,
+},
+status: {
     type: String,
     required: true
-  },
-  sport: {
+},
+teamA: {
     type: String,
-    trim: true
-  }
-});
+    required: true
+},
+teamAscore: {
+    type: Number,
+    required: true
+},
+teamBscore: {
+    type: Number,
+    required: true
+},   
+teamB: {
+    type: String,
+},
+teamAPosition: {
+    type:String
+},
+teamBPosition: {
+    type: String
+},
+
+teamAIcon: {
+    type: String,
+    required: true
+},
+teamBIcon: {
+    type: String,
+    required: true
+},
+category: {
+    type: String,
+},
+league: {
+    type: String
+},
+leagueIcon: {
+    type: String,
+    required: true
+},
+formationA: {
+    type: Array,
+    required: true
+},
+formationB: {
+    type: Array,
+    required: true
+},
+sport: {
+  type: String
+}
+},{timestamps: true})
+
 
 
 const Sport = mongoose.model("Sport", sportSchema);
