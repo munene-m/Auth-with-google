@@ -74,6 +74,10 @@ const adminSchema = new mongoose.Schema({
     betOfTheDay: {
         type: String,
         trim: true
+    },
+    date: {
+        type: Date,
+        default: Date.now()
     }
 },{timestamps: true})
 

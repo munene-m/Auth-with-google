@@ -22,7 +22,7 @@ cloudinary.config({
 })
 
 const createPrediction = asyncHandler(async (req, res) => {
-  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
 
   const leagueIcon = req.files['leagueIcon'][0];
   const teamAIcon = req.files['teamAIcon'][0];
@@ -54,7 +54,7 @@ const createPrediction = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore,
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore,date,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -77,7 +77,8 @@ const createPrediction = asyncHandler(async (req, res) => {
       category: prediction.category,
       leagueIcon: prediction.leagueIcon,
       teamAIcon: prediction.teamAIcon,
-      teamBIcon: prediction.teamBIcon
+      teamBIcon: prediction.teamBIcon,
+      date: prediction.date.toLocaleDateString()
     });
   } catch (error) {
     console.log(error);
@@ -86,7 +87,7 @@ const createPrediction = asyncHandler(async (req, res) => {
 });
 
 const createVipPrediction = asyncHandler(async (req, res) => {
-  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
   const vip = req.params.vip
 
   const leagueIcon = req.files['leagueIcon'][0];
@@ -119,7 +120,7 @@ const createVipPrediction = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, vip,
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, vip, date,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -143,7 +144,8 @@ const createVipPrediction = asyncHandler(async (req, res) => {
       leagueIcon: prediction.leagueIcon,
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
-      vip: prediction.vip
+      vip: prediction.vip, 
+      date: prediction.date.toLocaleDateString()
     });
   } catch (error) {
     console.log(error);
@@ -152,7 +154,7 @@ const createVipPrediction = asyncHandler(async (req, res) => {
 });
 
 const createFreeTip = asyncHandler(async (req, res) => {
-  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
   const freeTip = req.params.freeTip
 
   const leagueIcon = req.files['leagueIcon'][0];
@@ -185,7 +187,7 @@ const createFreeTip = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, freeTip,
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, freeTip,date,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -209,7 +211,8 @@ const createFreeTip = asyncHandler(async (req, res) => {
       leagueIcon: prediction.leagueIcon,
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
-      freeTip: prediction.freeTip
+      freeTip: prediction.freeTip,
+      date: prediction.date.toLocaleDateString()
     });
   } catch (error) {
     console.log(error);
@@ -218,7 +221,7 @@ const createFreeTip = asyncHandler(async (req, res) => {
 });
 
 const createUpcoming = asyncHandler(async (req, res) => {
-  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
   const upcoming = req.params.upcoming
 
   const leagueIcon = req.files['leagueIcon'][0];
@@ -251,7 +254,7 @@ const createUpcoming = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, upcoming,
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, upcoming, date,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -275,7 +278,9 @@ const createUpcoming = asyncHandler(async (req, res) => {
       leagueIcon: prediction.leagueIcon,
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
-      upcoming: prediction.upcoming
+      upcoming: prediction.upcoming,
+      date: prediction.date.toLocaleDateString()
+      
     });
   } catch (error) {
     console.log(error);
@@ -284,7 +289,7 @@ const createUpcoming = asyncHandler(async (req, res) => {
 });
 
 const createBetOfTheDay = asyncHandler(async (req, res) => {
-  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
   const betOfTheDay = req.params.betOfTheDay
 
   const leagueIcon = req.files['leagueIcon'][0];
@@ -317,7 +322,7 @@ const createBetOfTheDay = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, betOfTheDay,
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, betOfTheDay, date,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -341,7 +346,8 @@ const createBetOfTheDay = asyncHandler(async (req, res) => {
       leagueIcon: prediction.leagueIcon,
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
-      betOfTheDay: prediction.betOfTheDay
+      betOfTheDay: prediction.betOfTheDay,
+      date: prediction.date.toLocaleDateString()
     });
   } catch (error) {
     console.log(error);
@@ -358,7 +364,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("The prediction you tried to update does not exist");
   } else {
-    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
     const vip = req.params.vip
     let leagueIcon = prediction.leagueIcon;
     let teamAIcon = prediction.teamAIcon;
@@ -383,7 +389,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
-      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip },
+      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip, date },
       { new: true }
     );
 
