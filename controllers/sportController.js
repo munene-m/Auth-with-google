@@ -22,7 +22,7 @@ cloudinary.config({
 })
 
 const createPrediction = asyncHandler(async (req, res) => {
-  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+  const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
   const sport = req.params.sport
 
   const leagueIcon = req.files['leagueIcon'][0];
@@ -55,7 +55,7 @@ const createPrediction = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Sport.create({
-      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, sport,
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, sport, date,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -79,7 +79,8 @@ const createPrediction = asyncHandler(async (req, res) => {
       category: prediction.category,
       leagueIcon: prediction.leagueIcon,
       teamAIcon: prediction.teamAIcon,
-      teamBIcon: prediction.teamBIcon
+      teamBIcon: prediction.teamBIcon,
+      date: prediction.date.toLocaleDateString()
     });
   } catch (error) {
     console.log(error);
@@ -94,7 +95,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("The prediction you tried to update does not exist");
   } else {
-    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore } = req.body;
+    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
     let leagueIcon = prediction.leagueIcon;
     let teamAIcon = prediction.teamAIcon;
     let teamBIcon = prediction.teamBIcon;
@@ -118,7 +119,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
     const updatedPrediction = await Sport.findByIdAndUpdate(
       req.params.id,
-      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore },
+      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, date },
       { new: true }
     );
 
