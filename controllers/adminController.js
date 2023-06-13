@@ -53,6 +53,7 @@ const createPrediction = asyncHandler(async (req, res) => {
       crop: 'scale'
     });
 
+
     const prediction = await Admin.create({
       time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore,date,
       leagueIcon: result.secure_url,
@@ -120,7 +121,7 @@ const createVipPrediction = asyncHandler(async (req, res) => {
     });
 
     const prediction = await Admin.create({
-      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, vip, date,
+      time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, vip,date,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url
@@ -364,7 +365,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("The prediction you tried to update does not exist");
   } else {
-    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
+    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore } = req.body;
     const vip = req.params.vip
     let leagueIcon = prediction.leagueIcon;
     let teamAIcon = prediction.teamAIcon;
@@ -389,7 +390,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
-      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip, date },
+      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip },
       { new: true }
     );
 
@@ -399,42 +400,95 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
 
 const getPrediction = asyncHandler(async (req, res) => {
-    const prediction = await Admin.findById(req.params.id)
-    if(!prediction){
-        res.status(400)
-        throw new Error("This prediction does not exist")
-    } else {
-        res.status(200).json(prediction)
+  try {
+    const prediction = await Admin.findById(req.params.id);
+    if (!prediction) {
+      res.status(400);
+      throw new Error("This prediction does not exist");
     }
-    return;
 
-})
+    let formattedPrediction;
+    if (Array.isArray(prediction)) {
+      formattedPrediction = prediction.map((item) => ({
+        ...item._doc,
+        date: item.date.toLocaleDateString("en-US", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+      }));
+    } else {
+      formattedPrediction = {
+        ...prediction._doc,
+        date: prediction.date.toLocaleDateString("en-US", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+      };
+    }
+
+    res.status(200).json(formattedPrediction);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+
 
 const getVipPredictions = asyncHandler(async (req, res) => {
   try {
-    const prediction = await Admin.find({vip: decodeURIComponent(req.params.value)})
-    if(prediction.length === 0) {
-        res.status(400)
-        throw new Error("Prediction not found")
-    } else {
-      res.status(200).json(prediction)
+    const predictions = await Admin.find({ vip: decodeURIComponent(req.params.value) });
+    if (!predictions || predictions.length === 0) {
+      res.status(400);
+      throw new Error("Prediction not found");
     }
-    return;
-} catch (err) {
-console.log(err);        
-}
-})
+
+    const formattedPredictions = predictions.map((prediction) => {
+      const formattedDate = prediction.date.toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      return {
+        ...prediction._doc,
+        date: formattedDate,
+      };
+    });
+
+    res.status(200).json(formattedPredictions);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 
 const getFreeTips= asyncHandler(async (req, res) => {
   try {
-    const prediction = await Admin.find({freeTip: decodeURIComponent(req.params.value)})
-    if (prediction.length === 0) {
+    const predictions = await Admin.find({freeTip: decodeURIComponent(req.params.value)})
+    if (predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
-    } else {
-      res.status(200).json(prediction);
-    }
-    return;
+    } 
+    const formattedPredictions = predictions.map((prediction) => {
+      const formattedDate = prediction.date.toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      return {
+        ...prediction._doc,
+        date: formattedDate,
+      };
+    });
+
+    res.status(200).json(formattedPredictions);
 } catch (err) {
 console.log(err);        
 }
@@ -442,61 +496,116 @@ console.log(err);
 
 const getUpcoming = asyncHandler(async (req, res) => {
   try {
-    const prediction = await Admin.find({upcoming: decodeURIComponent(req.params.value)})
-    if(prediction.length === 0) {
-        res.status(400)
-        throw new Error("Prediction not found")
-    } else {
-      res.status(200).json(prediction)
+    const predictions = await Admin.find({ upcoming: decodeURIComponent(req.params.value) });
+    if (!predictions || predictions.length === 0) {
+      res.status(400);
+      throw new Error("Prediction not found");
     }
-    return;
 
-} catch (err) {
-console.log(err);        
-}
-})
+    const formattedPredictions = predictions.map((prediction) => {
+      const formattedDate = prediction.date.toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      return {
+        ...prediction._doc,
+        date: formattedDate,
+      };
+    });
+
+    res.status(200).json(formattedPredictions);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 
 const getBetOfTheDay = asyncHandler(async (req, res) => {
   try {
-    const prediction = await Admin.find({betOfTheDay: decodeURIComponent(req.params.value)})
-    if(prediction.length === 0) {
-        res.status(400)
-        throw new Error("Prediction not found")
-    } else {
-      res.status(200).json(prediction)
+    const predictions = await Admin.find({ betOfTheDay: decodeURIComponent(req.params.value) });
+    if (!predictions || predictions.length === 0) {
+      res.status(400);
+      throw new Error("Prediction not found");
     }
-    return;
 
-} catch (err) {
-console.log(err);        
-}
-})
+    const formattedPredictions = predictions.map((prediction) => {
+      const formattedDate = prediction.date.toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      return {
+        ...prediction._doc,
+        date: formattedDate,
+      };
+    });
+
+    res.status(200).json(formattedPredictions);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 
 const getPredictionInCategory = asyncHandler(async (req, res) => {
-  const prediction = await Admin.find({category: decodeURIComponent(req.params.value)})
-  if(!prediction){
-    res.status(400)
-    throw new Error("This prediction does not exist")
-  } else {
-    res.status(200).json(prediction)
+  const predictions = await Admin.find({ category: decodeURIComponent(req.params.value) });
+  if (!predictions || predictions.length === 0) {
+    res.status(400);
+    throw new Error("This prediction does not exist");
   }
-  return;
 
-})
+  const formattedPredictions = predictions.map((prediction) => {
+    const formattedDate = prediction.date.toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
+    return {
+      ...prediction._doc,
+      date: formattedDate,
+    };
+  });
+
+  res.status(200).json(formattedPredictions);
+});
+
 
 const getPredictions = asyncHandler(async (req, res) => {
-    try {
-        const predictions = await Admin.find()
-        if(!predictions){
-            res.status(400)
-            throw new Error("There are no predictions")
-        }
-        res.status(200).json(predictions)
+  try {
+    const predictions = await Admin.find();
+    if (!predictions) {
+      res.status(400);
+      throw new Error("There are no predictions");
+    }
+
+    // Format the date field in each prediction document
+    const formattedPredictions = predictions.map((prediction) => {
+      return {
+        ...prediction._doc,
+        date: prediction.date.toLocaleDateString("en-US", {
+          weekday: "short",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }),
+      };
+    });
+
+    res.status(200).json(formattedPredictions);
     return;
   } catch (err) {
-    console.log(err);        
-    }
-})
+    console.log(err);
+    res.status(500).json({ error: "An error occurred when fetching predictions" });
+  }
+});
+
 
 const deletePrediction = asyncHandler(async (req, res) => {
     try {

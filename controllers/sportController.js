@@ -127,25 +127,66 @@ const updatePrediction = asyncHandler(async (req, res) => {
   }
 });
 
-  const getPrediction = asyncHandler(async (req, res) => {
-    const prediction = await Sport.findById(req.params.id)
-    if(!prediction){
-        res.status(400)
-        throw new Error("This prediction does not exist")
-    } else {
-        res.status(200).json(prediction)
+const getPrediction = asyncHandler(async (req, res) => {
+  try {
+    const prediction = await Sport.findById(req.params.id);
+    if (!prediction) {
+      res.status(400);
+      throw new Error("This prediction does not exist");
     }
-})
+
+    let formattedPrediction;
+    if (Array.isArray(prediction)) {
+      formattedPrediction = prediction.map((item) => ({
+        ...item._doc,
+        date: item.date.toLocaleDateString("en-US", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+      }));
+    } else {
+      formattedPrediction = {
+        ...prediction._doc,
+        date: prediction.date.toLocaleDateString("en-US", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+      };
+    }
+
+    res.status(200).json(formattedPrediction);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 
 const getPredictionFromSport = asyncHandler(async (req, res) => {
   try {
-    const prediction = await Sport.find({sport: decodeURIComponent(req.params.value)})
-    if(prediction.length === 0) {
+    const predictions = await Sport.find({sport: decodeURIComponent(req.params.value)})
+    if(predictions.length === 0) {
         res.status(400)
         throw new Error("Prediction not found")
-    } else {
-      res.status(200).json(prediction)
-    }
+    } 
+    const formattedPredictions = predictions.map((prediction) => {
+      const formattedDate = prediction.date.toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+  
+      return {
+        ...prediction._doc,
+        date: formattedDate,
+      };
+    });
+  
+    res.status(200).json(formattedPredictions);
 } catch (err) {
 console.log(err);        
 }
@@ -158,7 +199,21 @@ const getPredictions = asyncHandler(async (req, res) => {
             res.status(400)
             throw new Error("There are no predictions")
         }
-        res.status(200).json(predictions)
+        const formattedPredictions = predictions.map((prediction) => {
+          const formattedDate = prediction.date.toLocaleDateString("en-US", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          });
+      
+          return {
+            ...prediction._doc,
+            date: formattedDate,
+          };
+        });
+      
+        res.status(200).json(formattedPredictions);
     } catch (err) {
     console.log(err);        
     }
