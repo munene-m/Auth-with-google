@@ -412,7 +412,7 @@ const getPrediction = asyncHandler(async (req, res) => {
       formattedPrediction = prediction.map((item) => ({
         ...item._doc,
         date: item.date.toLocaleDateString("en-US", {
-          weekday: "short",
+          weekday: "long",
           day: "numeric",
           month: "short",
           year: "numeric",
@@ -422,7 +422,7 @@ const getPrediction = asyncHandler(async (req, res) => {
       formattedPrediction = {
         ...prediction._doc,
         date: prediction.date.toLocaleDateString("en-US", {
-          weekday: "short",
+          weekday: "long",
           day: "numeric",
           month: "short",
           year: "numeric",
@@ -448,7 +448,7 @@ const getVipPredictions = asyncHandler(async (req, res) => {
 
     const formattedPredictions = predictions.map((prediction) => {
       const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "short",
+        weekday: "long",
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -476,7 +476,7 @@ const getFreeTips= asyncHandler(async (req, res) => {
     } 
     const formattedPredictions = predictions.map((prediction) => {
       const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "short",
+        weekday: "long",
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -504,7 +504,7 @@ const getUpcoming = asyncHandler(async (req, res) => {
 
     const formattedPredictions = predictions.map((prediction) => {
       const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "short",
+        weekday: "long",
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -533,7 +533,7 @@ const getBetOfTheDay = asyncHandler(async (req, res) => {
 
     const formattedPredictions = predictions.map((prediction) => {
       const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "short",
+        weekday: "long",
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -561,7 +561,7 @@ const getPredictionInCategory = asyncHandler(async (req, res) => {
 
   const formattedPredictions = predictions.map((prediction) => {
     const formattedDate = prediction.date.toLocaleDateString("en-US", {
-      weekday: "short",
+      weekday: "long",
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -590,7 +590,7 @@ const getPredictions = asyncHandler(async (req, res) => {
       return {
         ...prediction._doc,
         date: prediction.date.toLocaleDateString("en-US", {
-          weekday: "short",
+          weekday: "long",
           day: "numeric",
           month: "long",
           year: "numeric",
