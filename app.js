@@ -4,6 +4,7 @@ const cors = require("cors")
 const path = require('path')
 const dotenv = require("dotenv")
 const session = require('express-session')
+const morgan = require("morgan")
 const MongoStore = require('connect-mongo')
 const helmet = require('helmet');
 const { connectDB } = require("./config/db")
@@ -31,6 +32,8 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24, // cookie will expire after 1 day (in milliseconds)
   },
 }));
+
+app.use(morgan('combined'));
   
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
