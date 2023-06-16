@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler')
 const Sport = require('../models/Sport')
 const multer = require("multer")
 const cloudinary = require("cloudinary").v2
+const moment = require("moment");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -127,6 +128,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
   }
 });
 
+
 const getPrediction = asyncHandler(async (req, res) => {
   try {
     const prediction = await Sport.findById(req.params.id);
@@ -139,22 +141,12 @@ const getPrediction = asyncHandler(async (req, res) => {
     if (Array.isArray(prediction)) {
       formattedPrediction = prediction.map((item) => ({
         ...item._doc,
-        date: item.date.toLocaleDateString("en-US", {
-          weekday: "long",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
+        date: moment(item.date).format("dddd, MMM D YYYY"),
       }));
     } else {
       formattedPrediction = {
         ...prediction._doc,
-        date: prediction.date.toLocaleDateString("en-US", {
-          weekday: "long",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
+        date: moment(prediction.date).format("dddd, MMM D YYYY"),
       };
     }
 
@@ -165,6 +157,7 @@ const getPrediction = asyncHandler(async (req, res) => {
 });
 
 
+
 const getPredictionFromSport = asyncHandler(async (req, res) => {
   try {
     const predictions = await Sport.find({sport: decodeURIComponent(req.params.value)})
@@ -173,13 +166,7 @@ const getPredictionFromSport = asyncHandler(async (req, res) => {
         throw new Error("Prediction not found")
     } 
     const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-  
+      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
       return {
         ...prediction._doc,
         date: formattedDate,
@@ -200,13 +187,7 @@ const getPredictions = asyncHandler(async (req, res) => {
             throw new Error("There are no predictions")
         }
         const formattedPredictions = predictions.map((prediction) => {
-          const formattedDate = prediction.date.toLocaleDateString("en-US", {
-            weekday: "long",
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          });
-      
+          const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
           return {
             ...prediction._doc,
             date: formattedDate,

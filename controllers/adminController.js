@@ -1,6 +1,7 @@
 const Admin = require("../models/Admin");
 const asyncHandler = require("express-async-handler");
 const multer = require("multer")
+const moment = require("moment")
 const cloudinary = require("cloudinary").v2
 
 const storage = multer.diskStorage({
@@ -398,7 +399,6 @@ const updatePrediction = asyncHandler(async (req, res) => {
   }
 });
 
-
 const getPrediction = asyncHandler(async (req, res) => {
   try {
     const prediction = await Admin.findById(req.params.id);
@@ -411,22 +411,12 @@ const getPrediction = asyncHandler(async (req, res) => {
     if (Array.isArray(prediction)) {
       formattedPrediction = prediction.map((item) => ({
         ...item._doc,
-        date: item.date.toLocaleDateString("en-US", {
-          weekday: "long",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
+        date: moment(item.date).format("dddd, MMM D YYYY"),
       }));
     } else {
       formattedPrediction = {
         ...prediction._doc,
-        date: prediction.date.toLocaleDateString("en-US", {
-          weekday: "long",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
+        date: moment(prediction.date).format("dddd, MMM D YYYY"),
       };
     }
 
@@ -435,6 +425,7 @@ const getPrediction = asyncHandler(async (req, res) => {
     console.log(err);
   }
 });
+
 
 
 
@@ -447,19 +438,13 @@ const getVipPredictions = asyncHandler(async (req, res) => {
     }
 
     const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-
+      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
       return {
         ...prediction._doc,
         date: formattedDate,
       };
     });
-
+  
     res.status(200).json(formattedPredictions);
   } catch (err) {
     console.log(err);
@@ -475,19 +460,13 @@ const getFreeTips= asyncHandler(async (req, res) => {
       throw new Error("Prediction not found");
     } 
     const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-
+      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
       return {
         ...prediction._doc,
         date: formattedDate,
       };
     });
-
+  
     res.status(200).json(formattedPredictions);
 } catch (err) {
 console.log(err);        
@@ -503,19 +482,13 @@ const getUpcoming = asyncHandler(async (req, res) => {
     }
 
     const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-
+      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
       return {
         ...prediction._doc,
         date: formattedDate,
       };
     });
-
+  
     res.status(200).json(formattedPredictions);
   } catch (err) {
     console.log(err);
@@ -532,19 +505,13 @@ const getBetOfTheDay = asyncHandler(async (req, res) => {
     }
 
     const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = prediction.date.toLocaleDateString("en-US", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-
+      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
       return {
         ...prediction._doc,
         date: formattedDate,
       };
     });
-
+  
     res.status(200).json(formattedPredictions);
   } catch (err) {
     console.log(err);
@@ -560,13 +527,7 @@ const getPredictionInCategory = asyncHandler(async (req, res) => {
   }
 
   const formattedPredictions = predictions.map((prediction) => {
-    const formattedDate = prediction.date.toLocaleDateString("en-US", {
-      weekday: "long",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-
+    const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
     return {
       ...prediction._doc,
       date: formattedDate,
@@ -576,6 +537,8 @@ const getPredictionInCategory = asyncHandler(async (req, res) => {
   res.status(200).json(formattedPredictions);
 });
 
+
+// const moment = require("moment");
 
 const getPredictions = asyncHandler(async (req, res) => {
   try {
@@ -587,14 +550,10 @@ const getPredictions = asyncHandler(async (req, res) => {
 
     // Format the date field in each prediction document
     const formattedPredictions = predictions.map((prediction) => {
+      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
       return {
         ...prediction._doc,
-        date: prediction.date.toLocaleDateString("en-US", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }),
+        date: formattedDate,
       };
     });
 
