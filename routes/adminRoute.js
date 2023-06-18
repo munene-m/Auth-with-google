@@ -9,7 +9,7 @@ router.route("/:date").get(getPredictions)
 router.route("/:id").get(getPrediction)
 router.route("/tips/:value/:date").get(getFreeTips)
 router.route("/vipPredictions/:value/:date").get(getVipPredictions)
-router.route("/upcomingPredictions/:value/:datw").get(getUpcoming)
+router.route("/upcomingPredictions/:value/:date").get(getUpcoming)
 router.route("/bet/:value/:date").get(getBetOfTheDay)
 router.route("/create").post(
     protect, upload.fields([
