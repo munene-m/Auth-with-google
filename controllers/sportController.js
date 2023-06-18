@@ -131,7 +131,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
 const getPrediction = asyncHandler(async (req, res) => {
   try {
-    const prediction = await Sport.findById(req.params.id);
+    const prediction = await Sport.findById(req.params.id,);
     if (!prediction) {
       res.status(400);
       throw new Error("This prediction does not exist");
@@ -160,7 +160,7 @@ const getPrediction = asyncHandler(async (req, res) => {
 
 const getPredictionFromSport = asyncHandler(async (req, res) => {
   try {
-    const predictions = await Sport.find({sport: decodeURIComponent(req.params.value)})
+    const predictions = await Sport.find({sport: decodeURIComponent(req.params.value), date:req.params.date})
     if(predictions.length === 0) {
         res.status(400)
         throw new Error("Prediction not found")
@@ -181,7 +181,7 @@ console.log(err);
 
 const getPredictions = asyncHandler(async (req, res) => {
     try {
-        const predictions = await Sport.find()
+        const predictions = await Sport.find({date:req.params.date})
         if(!predictions){
             res.status(400)
             throw new Error("There are no predictions")
