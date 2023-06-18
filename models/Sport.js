@@ -63,7 +63,7 @@ sport: {
   type: String
 },
 date: {
-    type: string
+    type: String
 }
 },{timestamps: true})
 

@@ -80,7 +80,7 @@ const createPrediction = asyncHandler(async (req, res) => {
       leagueIcon: prediction.leagueIcon,
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
-      date: prediction.date.toLocaleDateString()
+      date: prediction.date
     });
   } catch (error) {
     console.log(error);
@@ -147,7 +147,7 @@ const createVipPrediction = asyncHandler(async (req, res) => {
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
       vip: prediction.vip, 
-      date: prediction.date.toLocaleDateString()
+      date: prediction.date
     });
   } catch (error) {
     console.log(error);
@@ -214,7 +214,7 @@ const createFreeTip = asyncHandler(async (req, res) => {
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
       freeTip: prediction.freeTip,
-      date: prediction.date.toLocaleDateString()
+      date: prediction.date
     });
   } catch (error) {
     console.log(error);
@@ -281,7 +281,7 @@ const createUpcoming = asyncHandler(async (req, res) => {
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
       upcoming: prediction.upcoming,
-      date: prediction.date.toLocaleDateString()
+      date: prediction.date
       
     });
   } catch (error) {
@@ -349,7 +349,7 @@ const createBetOfTheDay = asyncHandler(async (req, res) => {
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
       betOfTheDay: prediction.betOfTheDay,
-      date: prediction.date.toLocaleDateString()
+      date: prediction.date
     });
   } catch (error) {
     console.log(error);
@@ -431,7 +431,8 @@ const getPrediction = asyncHandler(async (req, res) => {
 
 const getVipPredictions = asyncHandler(async (req, res) => {
   try {
-    const predictions = await Admin.find({ vip: decodeURIComponent(req.params.value) });
+    // const date = req.params.date
+    const predictions = await Admin.find({ vip: decodeURIComponent(req.params.value), date:req.params.date });
     if (!predictions || predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
@@ -451,10 +452,27 @@ const getVipPredictions = asyncHandler(async (req, res) => {
   }
 });
 
+// const getVipDates = asyncHandler(async (req, res) => {
+//   try {
+//     const { value } = req.params;
+//     const predictions = await Admin.find({ date: value });
+    
+//     if (!predictions || predictions.length === 0) {
+//       res.status(400);
+//       throw new Error("Prediction not found");
+//     }
+    
+//     res.status(200).json(predictions);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
+
+
 
 const getFreeTips= asyncHandler(async (req, res) => {
   try {
-    const predictions = await Admin.find({freeTip: decodeURIComponent(req.params.value)})
+    const predictions = await Admin.find({freeTip: decodeURIComponent(req.params.value), date:req.params.date})
     if (predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
@@ -475,7 +493,7 @@ console.log(err);
 
 const getUpcoming = asyncHandler(async (req, res) => {
   try {
-    const predictions = await Admin.find({ upcoming: decodeURIComponent(req.params.value) });
+    const predictions = await Admin.find({ upcoming: decodeURIComponent(req.params.value), date:req.params.date });
     if (!predictions || predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
@@ -498,7 +516,7 @@ const getUpcoming = asyncHandler(async (req, res) => {
 
 const getBetOfTheDay = asyncHandler(async (req, res) => {
   try {
-    const predictions = await Admin.find({ betOfTheDay: decodeURIComponent(req.params.value) });
+    const predictions = await Admin.find({ betOfTheDay: decodeURIComponent(req.params.value), date:req.params.date });
     if (!predictions || predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
@@ -520,7 +538,7 @@ const getBetOfTheDay = asyncHandler(async (req, res) => {
 
 
 const getPredictionInCategory = asyncHandler(async (req, res) => {
-  const predictions = await Admin.find({ category: decodeURIComponent(req.params.value) });
+  const predictions = await Admin.find({ category: decodeURIComponent(req.params.value), date:req.params.date });
   if (!predictions || predictions.length === 0) {
     res.status(400);
     throw new Error("This prediction does not exist");
@@ -542,7 +560,7 @@ const getPredictionInCategory = asyncHandler(async (req, res) => {
 
 const getPredictions = asyncHandler(async (req, res) => {
   try {
-    const predictions = await Admin.find();
+    const predictions = await Admin.find({date:req.params.date});
     if (!predictions) {
       res.status(400);
       throw new Error("There are no predictions");

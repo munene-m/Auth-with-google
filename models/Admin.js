@@ -76,7 +76,7 @@ const adminSchema = new mongoose.Schema({
         trim: true
     },
     date: {
-        type: string,
+        type: String,
         // default: Date.now()
     }
 },{timestamps: true})

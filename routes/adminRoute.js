@@ -5,12 +5,12 @@ const upload = multer({ dest: 'uploads/'})
 const { createPrediction, createVipPrediction, createFreeTip, createUpcoming, createBetOfTheDay, updatePrediction, getPrediction, getBetOfTheDay, getUpcoming, getPredictions,  getFreeTips, getVipPredictions, getPredictionInCategory, deletePrediction } = require('../controllers/adminController')
 const { protect } = require('../middleware/authMiddleware')
 
-router.route("/").get(getPredictions)
+router.route("/:date").get(getPredictions)
 router.route("/:id").get(getPrediction)
-router.route("/tips/:value").get(getFreeTips)
-router.route("/vipPredictions/:value").get(getVipPredictions)
-router.route("/upcomingPredictions/:value").get(getUpcoming)
-router.route("/bet/:value").get(getBetOfTheDay)
+router.route("/tips/:value/:date").get(getFreeTips)
+router.route("/vipPredictions/:value/:date").get(getVipPredictions)
+router.route("/upcomingPredictions/:value/:datw").get(getUpcoming)
+router.route("/bet/:value/:date").get(getBetOfTheDay)
 router.route("/create").post(
     protect, upload.fields([
       { name: 'leagueIcon' },
