@@ -33,7 +33,7 @@ app.use(session({
   },
 }));
 
-app.use(morgan('combined'));
+app.use(morgan('dev'));
   
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
