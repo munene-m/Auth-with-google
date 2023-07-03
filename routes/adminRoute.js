@@ -57,6 +57,6 @@ router.route("/update/:id").put(protect, upload.fields([
     { name: 'teamBIcon' },
   ]), updatePrediction)
 router.route("/delete/:id").delete(protect, deletePrediction)
-router.route("/prediction/:value").get(getPredictionInCategory)
+router.route("/prediction/:value/:date").get(getPredictionInCategory)
 
 module.exports = router
