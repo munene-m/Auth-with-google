@@ -405,22 +405,10 @@ const getPrediction = asyncHandler(async (req, res) => {
     if (!prediction) {
       res.status(400);
       throw new Error("This prediction does not exist");
+    }else{
+      res.status(200).json(prediction);
     }
 
-    let formattedPrediction;
-    if (Array.isArray(prediction)) {
-      formattedPrediction = prediction.map((item) => ({
-        ...item._doc,
-        date: moment(item.date).format("dddd, MMM D YYYY"),
-      }));
-    } else {
-      formattedPrediction = {
-        ...prediction._doc,
-        date: moment(prediction.date).format("dddd, MMM D YYYY"),
-      };
-    }
-
-    res.status(200).json(formattedPrediction);
   } catch (err) {
     console.log(err);
   }
@@ -436,17 +424,10 @@ const getVipPredictions = asyncHandler(async (req, res) => {
     if (!predictions || predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
+    }else{
+      res.status(200).json(predictions);
     }
-
-    const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
-      return {
-        ...prediction._doc,
-        date: formattedDate,
-      };
-    });
   
-    res.status(200).json(formattedPredictions);
   } catch (err) {
     console.log(err);
   }
@@ -476,16 +457,10 @@ const getFreeTips= asyncHandler(async (req, res) => {
     if (predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
-    } 
-    const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
-      return {
-        ...prediction._doc,
-        date: formattedDate,
-      };
-    });
+    } else{
+      res.status(200).json(predictions);
+    }
   
-    res.status(200).json(formattedPredictions);
 } catch (err) {
 console.log(err);        
 }
@@ -497,17 +472,9 @@ const getUpcoming = asyncHandler(async (req, res) => {
     if (!predictions || predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
+    }else{  
+    res.status(200).json(predictions);
     }
-
-    const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
-      return {
-        ...prediction._doc,
-        date: formattedDate,
-      };
-    });
-  
-    res.status(200).json(formattedPredictions);
   } catch (err) {
     console.log(err);
   }
@@ -520,17 +487,11 @@ const getBetOfTheDay = asyncHandler(async (req, res) => {
     if (!predictions || predictions.length === 0) {
       res.status(400);
       throw new Error("Prediction not found");
-    }
+    }else{
+      res.status(200).json(predictions);
 
-    const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
-      return {
-        ...prediction._doc,
-        date: formattedDate,
-      };
-    });
+    }
   
-    res.status(200).json(formattedPredictions);
   } catch (err) {
     console.log(err);
   }
@@ -542,17 +503,10 @@ const getPredictionInCategory = asyncHandler(async (req, res) => {
   if (!predictions || predictions.length === 0) {
     res.status(400);
     throw new Error("This prediction does not exist");
+  }else{
+    res.status(200).json(predictions);
+
   }
-
-  const formattedPredictions = predictions.map((prediction) => {
-    const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
-    return {
-      ...prediction._doc,
-      date: formattedDate,
-    };
-  });
-
-  res.status(200).json(formattedPredictions);
 });
 
 
@@ -564,18 +518,11 @@ const getPredictions = asyncHandler(async (req, res) => {
     if (!predictions) {
       res.status(400);
       throw new Error("There are no predictions");
+    }else{
+      res.status(200).json(predictions);
+
     }
 
-    // Format the date field in each prediction document
-    const formattedPredictions = predictions.map((prediction) => {
-      const formattedDate = moment(prediction.date).format("dddd, MMMM Do YYYY");
-      return {
-        ...prediction._doc,
-        date: formattedDate,
-      };
-    });
-
-    res.status(200).json(formattedPredictions);
     return;
   } catch (err) {
     console.log(err);
