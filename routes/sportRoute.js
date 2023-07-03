@@ -15,7 +15,7 @@ router.route("/update/:id").put(protect, upload.fields([
     { name: 'teamAIcon' },
     { name: 'teamBIcon' },
   ]), updatePrediction)
-router.route("/:id").get(getPrediction)
+router.route("/prediction/:id").get(getPrediction)
 router.route("/:date").get(getPredictions)
 router.route("/sport/:value/:date").get(getPredictionFromSport)
 router.route("/delete/:id").delete(protect, deletePrediction)
