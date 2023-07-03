@@ -149,7 +149,7 @@ const getPrediction = asyncHandler(async (req, res) => {
 const getPredictionFromSport = asyncHandler(async (req, res) => {
   try {
     const predictions = await Sport.find({sport: decodeURIComponent(req.params.value), date:req.params.date})
-    if(predictions.length === 0) {
+    if(!predictions) {
         res.status(400)
         throw new Error("Prediction not found")
     } else{
