@@ -391,7 +391,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
-      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip },
+      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip, date },
       { new: true }
     );
 
@@ -465,6 +465,19 @@ const getFreeTips= asyncHandler(async (req, res) => {
 console.log(err);        
 }
 })
+// const getSingleFreetip = asyncHandler(async(req, res) => {
+//   try {
+//     const predictions = await Admin.find({freeTip: decodeURIComponent(req.params.value), id:req.params.id, date:req.params.date})
+//     if (!predictions) {
+//       res.status(400);
+//       throw new Error("Prediction not found");
+//     } else{
+//       res.status(200).json(predictions);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// })
 
 const getUpcoming = asyncHandler(async (req, res) => {
   try {
