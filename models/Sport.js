@@ -8,8 +8,7 @@ tip: {
     type: String,
 },
 status: {
-    type: String,
-    required: true
+    type: String
 },
 teamA: {
     type: String,
