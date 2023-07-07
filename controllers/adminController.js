@@ -366,7 +366,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("The prediction you tried to update does not exist");
   } else {
-    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
+    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, showScore, date } = req.body;
     const vip = req.params.vip
     let leagueIcon = prediction.leagueIcon;
     let teamAIcon = prediction.teamAIcon;
@@ -391,7 +391,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
 
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
-      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip, date },
+      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip, showScore, date },
       { new: true }
     );
 

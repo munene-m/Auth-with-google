@@ -61,6 +61,10 @@ formationB: {
 sport: {
   type: String
 },
+showScore: {
+    type: Boolean,
+    default: true
+},
 date: {
     type: String
 }

@@ -74,6 +74,10 @@ const adminSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    showScore: {
+        type: Boolean,
+        default: true
+    },
     date: {
         type: String,
         // default: Date.now()
