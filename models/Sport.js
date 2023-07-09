@@ -15,12 +15,10 @@ teamA: {
     required: true
 },
 teamAscore: {
-    type: Number,
-    required: true
+    type: Number
 },
 teamBscore: {
-    type: Number,
-    required: true
+    type: Number
 },   
 teamB: {
     type: String,
