@@ -44,6 +44,6 @@ const userSchema = new mongoose.Schema({
 
 userSchema.plugin(findOrCreate);
 
-const User = mongoose.model("UserGoogle", userSchema);
+const User = mongoose.model("Users", userSchema);
 
 module.exports = User;
