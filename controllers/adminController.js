@@ -527,7 +527,7 @@ const getPredictionInCategory = asyncHandler(async (req, res) => {
 
 const getPredictions = asyncHandler(async (req, res) => {
   try {
-    const predictions = await Admin.find({date:req.params.date});
+    const predictions = await Admin.find({date:req.params.date,category: { $exists: true }});
     if (!predictions) {
       res.status(400);
       throw new Error("There are no predictions");
