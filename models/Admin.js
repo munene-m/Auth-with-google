@@ -74,7 +74,7 @@ const adminSchema = new mongoose.Schema({
     },
     showScore: {
         type: Boolean,
-        default: true
+        default: false
     },
     date: {
         type: String,
