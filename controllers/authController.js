@@ -206,6 +206,14 @@ const registerUser = asyncHandler(async (req, res) => {
       res.json(users)
     }
   })
+  const getUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id)
+    if(!user){
+      res.status(400).json("User not found")
+    } else {
+      res.json(user)
+    }
+  })
 
   const redirectUser = asyncHandler(async (req, res) => {
     res.status(200).json({ redirectTo: '/' })
@@ -232,4 +240,4 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   };
 
-  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getUsers, deleteUser, getVipUsers,getCredentials, redirectUser }
+  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getUsers, getUser, deleteUser, getVipUsers,getCredentials, redirectUser }

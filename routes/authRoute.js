@@ -1,9 +1,10 @@
 const express = require('express')
-const { loginUser, registerUser, registerAdmin, getCredentials, getUsers, redirectUser,getVipUsers, deleteUser, loginWithGoogle, reset, googleAuthCallback, updateUser } = require("../controllers/authController");
+const { loginUser, registerUser, registerAdmin, getCredentials, getUsers, redirectUser,getVipUsers, deleteUser, loginWithGoogle, reset, googleAuthCallback, updateUser, getUser } = require("../controllers/authController");
 const { protect } = require("../middleware/authMiddleware")
 const router = express.Router();
 
 router.route("/").get(protect,getUsers)
+router.route("/:id").get(protect, getUser)
 router.route("/credentials").get(protect,getCredentials)
 router.route("/getVip").get(protect, getVipUsers)
 router.route("/googleCredentials").get(redirectUser)
