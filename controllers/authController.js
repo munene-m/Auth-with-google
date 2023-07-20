@@ -109,27 +109,14 @@ const registerUser = asyncHandler(async (req, res) => {
   //Log in user
   const loginUser = asyncHandler(async (req, res) => {
     const { email, password, googleId } = req.body;
-  
-    if ((!email || !password) && !googleId) {
+
+    if (!email || !password) {
       res.status(400);
       throw new Error("Please enter all the required fields");
     } 
-    let user
-    if(googleId){
-        user = await User.findOne({ googleId });
-        if(!user) {
-            user = await User.create({
-                email, googleId
-            })
-        }
-    } else {
-        user = await User.findOne({ email })
-        if(!user || !(bcrypt.compare(password, user.password))){
-            res.status(400)
-            throw new Error("The credentials you entered are invalid");
-        }        
-    }
-    res.status(200).json({
+    const user = await User.findOne({email})
+    if(user && (await bcrypt.compare(password, user.password))){
+      res.status(200).json({
         _id: user.id,
         username: user.username,
         email: user.email,
@@ -137,6 +124,11 @@ const registerUser = asyncHandler(async (req, res) => {
         isAdmin: user.isAdmin,
         token: generateToken(user._id),
       });
+    } else {
+      res.status(400);
+      throw new Error("The credentials you entered are invalid");
+    }
+
   });
 
   const updateUser = asyncHandler( async( req, res ) => {
