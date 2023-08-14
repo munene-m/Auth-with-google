@@ -9,7 +9,7 @@ require('../passport.js')
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password, confirmPassword, country, googleId, paid } = req.body;
 
-  if ((!username || !email || !password || !confirmPassword || !country) && !googleId)  {
+  if ((!username || !email || !password || !country) && !googleId)  {
     res.status(400);
     throw new Error("Please enter all the required fields");
   }
@@ -58,7 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const registerAdmin = asyncHandler(async (req, res) => {
     const { username, email, password, confirmPassword, country, googleId, paid, isAdmin } = req.body;
   
-    if ((!username || !email || !password || !confirmPassword || !country) && !googleId)  {
+    if ((!username || !email || !password || !country) && !googleId)  {
       res.status(400);
       throw new Error("Please enter all the required fields");
     }
