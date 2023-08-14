@@ -71,10 +71,10 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new Error("User already exists!");
     }
   
-    if (password !== confirmPassword) {
-      res.status(400);
-      throw new Error("Passwords do not match");
-    }
+    // if (password !== confirmPassword) {
+    //   res.status(400);
+    //   throw new Error("Passwords do not match");
+    // }
   
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
