@@ -90,41 +90,63 @@ const createPrediction = asyncHandler(async (req, res) => {
 });
 
 const updatePrediction = asyncHandler(async (req, res) => {
-  const prediction = await Sport.findById(req.params.id);
+  const prediction = await Admin.findById(req.params.id);
 
   if (!prediction) {
     res.status(400);
     throw new Error("The prediction you tried to update does not exist");
   } else {
-    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, date, showScore } = req.body;
-    let leagueIcon = prediction.leagueIcon;
-    let teamAIcon = prediction.teamAIcon;
-    let teamBIcon = prediction.teamBIcon;
+    const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, showScore, date } = req.body;
+    const vip = req.params.vip;
 
-    if (req.file) {
-      // If a new image is uploaded, update it in Cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        width: 500,
-        height: 500,
-        crop: "scale",
-        quality: 60
-      });
-      if (req.file.fieldname === "leagueIcon") {
+    try {
+      let leagueIcon = prediction.leagueIcon;
+      let teamAIcon = prediction.teamAIcon;
+      let teamBIcon = prediction.teamBIcon;
+
+      if (req.files['leagueIcon']) {
+        const result = await cloudinary.uploader.upload(req.files['leagueIcon'][0].path, {
+          width: 500,
+          height: 500,
+          crop: 'scale',
+        });
         leagueIcon = result.secure_url;
-      } else if (req.file.fieldname === "teamAIcon") {
-        teamAIcon = result.secure_url;
-      } else if (req.file.fieldname === "teamBIcon") {
-        teamBIcon = result.secure_url;
       }
+
+      if (req.files['teamAIcon']) {
+        const result2 = await cloudinary.uploader.upload(req.files['teamAIcon'][0].path, {
+          width: 500,
+          height: 500,
+          crop: 'scale',
+        });
+        teamAIcon = result2.secure_url;
+      }
+
+      if (req.files['teamBIcon']) {
+        const result3 = await cloudinary.uploader.upload(req.files['teamBIcon'][0].path, {
+          width: 500,
+          height: 500,
+          crop: 'scale',
+        });
+        teamBIcon = result3.secure_url;
+      }
+
+      const updatedPrediction = await Admin.findByIdAndUpdate(
+        req.params.id,
+        {
+          time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category, teamA, teamB, teamAscore, teamBscore, vip, showScore, date,
+          leagueIcon,
+          teamAIcon,
+          teamBIcon
+        },
+        { new: true }
+      );
+
+      res.status(200).json(updatedPrediction);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "An error occurred when updating the prediction" });
     }
-
-    const updatedPrediction = await Sport.findByIdAndUpdate(
-      req.params.id,
-      { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, showScore, date },
-      { new: true }
-    );
-
-    res.status(200).json(updatedPrediction);
   }
 });
 
