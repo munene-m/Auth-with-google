@@ -366,11 +366,11 @@ const updatePrediction = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("The prediction you tried to update does not exist");
   } else {
-    const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, showScore, date } = req.body;
-    const vip = req.params.vip
-    let leagueIcon = prediction.leagueIcon;
-    let teamAIcon = prediction.teamAIcon;
-    let teamBIcon = prediction.teamBIcon;
+    const { time, tip, status, formationA, leagueIcon, teamAIcon, teamBIcon, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, showScore, date } = req.body;
+    // const vip = req.params.vip
+    // let leagueIcon = prediction.leagueIcon;
+    // let teamAIcon = prediction.teamAIcon;
+    // let teamBIcon = prediction.teamBIcon;
 
     if (req.file) {
       // If a new image is uploaded, update it in Cloudinary
