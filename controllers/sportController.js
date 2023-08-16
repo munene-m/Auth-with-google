@@ -90,7 +90,7 @@ const createPrediction = asyncHandler(async (req, res) => {
 });
 
 const updatePrediction = asyncHandler(async (req, res) => {
-  const prediction = await Admin.findById(req.params.id);
+  const prediction = await Sport.findById(req.params.id);
 
   if (!prediction) {
     res.status(400);
@@ -131,7 +131,7 @@ const updatePrediction = asyncHandler(async (req, res) => {
         teamBIcon = result3.secure_url;
       }
 
-      const updatedPrediction = await Admin.findByIdAndUpdate(
+      const updatedPrediction = await Sport.findByIdAndUpdate(
         req.params.id,
         {
           time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category, teamA, teamB, teamAscore, teamBscore, vip, showScore, date,
