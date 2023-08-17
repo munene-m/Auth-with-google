@@ -22,6 +22,20 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
+const handleImageUpload = async (imageFile) => {
+  try {
+    const result = await cloudinary.uploader.upload(imageFile.path, {
+      width: 500,
+      height: 500,
+      crop: 'scale',
+    });
+    return result.secure_url;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error uploading image");
+  }
+};
+
 const createPrediction = asyncHandler(async (req, res) => {
   const { time, tip, status, formationA, formationB, league, teamAPosition, teamBPosition, category, teamA, teamB, teamAscore, teamBscore, date } = req.body;
 
@@ -36,30 +50,15 @@ const createPrediction = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await cloudinary.uploader.upload(leagueIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale',
-    });
-
-    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
-
-    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
-
+    const leagueIconUrl = await handleImageUpload(leagueIcon);
+    const teamAIconUrl = await handleImageUpload(teamAIcon);
+    const teamBIconUrl = await handleImageUpload(teamBIcon);
 
     const prediction = await Admin.create({
       time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore,date,
-      leagueIcon: result.secure_url,
-      teamAIcon: result2.secure_url,
-      teamBIcon: result3.secure_url
+      leagueIcon: leagueIconUrl,
+      teamAIcon: teamAIconUrl,
+      teamBIcon: teamBIconUrl
     });
 
     res.status(201).json({
@@ -103,29 +102,15 @@ const createVipPrediction = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await cloudinary.uploader.upload(leagueIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale',
-    });
-
-    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
-
-    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
+    const leagueIconUrl = await handleImageUpload(leagueIcon);
+    const teamAIconUrl = await handleImageUpload(teamAIcon);
+    const teamBIconUrl = await handleImageUpload(teamBIcon);
 
     const prediction = await Admin.create({
       time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, vip,date,
-      leagueIcon: result.secure_url,
-      teamAIcon: result2.secure_url,
-      teamBIcon: result3.secure_url
+      leagueIcon: leagueIconUrl,
+      teamAIcon: teamAIconUrl,
+      teamBIcon: teamBIconUrl
     });
 
     res.status(201).json({
@@ -170,29 +155,15 @@ const createFreeTip = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await cloudinary.uploader.upload(leagueIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale',
-    });
-
-    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
-
-    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
+    const leagueIconUrl = await handleImageUpload(leagueIcon);
+    const teamAIconUrl = await handleImageUpload(teamAIcon);
+    const teamBIconUrl = await handleImageUpload(teamBIcon);
 
     const prediction = await Admin.create({
       time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, freeTip,date,
-      leagueIcon: result.secure_url,
-      teamAIcon: result2.secure_url,
-      teamBIcon: result3.secure_url
+      leagueIcon: leagueIconUrl,
+      teamAIcon: teamAIconUrl,
+      teamBIcon: teamBIconUrl
     });
 
     res.status(201).json({
@@ -237,29 +208,15 @@ const createUpcoming = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await cloudinary.uploader.upload(leagueIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale',
-    });
-
-    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
-
-    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
+    const leagueIconUrl = await handleImageUpload(leagueIcon);
+    const teamAIconUrl = await handleImageUpload(teamAIcon);
+    const teamBIconUrl = await handleImageUpload(teamBIcon);
 
     const prediction = await Admin.create({
       time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, upcoming, date,
-      leagueIcon: result.secure_url,
-      teamAIcon: result2.secure_url,
-      teamBIcon: result3.secure_url
+      leagueIcon: leagueIconUrl,
+      teamAIcon: teamAIconUrl,
+      teamBIcon: teamBIconUrl
     });
 
     res.status(201).json({
@@ -305,29 +262,15 @@ const createBetOfTheDay = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await cloudinary.uploader.upload(leagueIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale',
-    });
-
-    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
-
-    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
-      width: 500,
-      height: 500,
-      crop: 'scale'
-    });
+    const leagueIconUrl = await handleImageUpload(leagueIcon);
+    const teamAIconUrl = await handleImageUpload(teamAIcon);
+    const teamBIconUrl = await handleImageUpload(teamBIcon);
 
     const prediction = await Admin.create({
       time, tip, status, formationA, formationB, teamAPosition, teamBPosition, league, category,teamA, teamB, teamAscore, teamBscore, betOfTheDay, date,
-      leagueIcon: result.secure_url,
-      teamAIcon: result2.secure_url,
-      teamBIcon: result3.secure_url
+      leagueIcon: leagueIconUrl,
+      teamAIcon: teamAIconUrl,
+      teamBIcon: teamBIconUrl
     });
 
     res.status(201).json({
@@ -356,48 +299,6 @@ const createBetOfTheDay = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "An error occurred when creating the prediction" });
   }
 });
-
-
-
-// const updatePrediction = asyncHandler(async (req, res) => {
-//   const prediction = await Admin.findById(req.params.id);
-
-//   if (!prediction) {
-//     res.status(400);
-//     throw new Error("The prediction you tried to update does not exist");
-//   } else {
-//     const { time, tip, status, formationA, formationB, teamBPosition, teamAPosition, league, category, teamA, teamB, teamAscore, teamBscore, showScore, date } = req.body;
-//     const vip = req.params.vip
-//     let leagueIcon = prediction.leagueIcon;
-//     let teamAIcon = prediction.teamAIcon;
-//     let teamBIcon = prediction.teamBIcon;
-
-//     if (req.file) {
-//       // If a new image is uploaded, update it in Cloudinary
-//       const result = await cloudinary.uploader.upload(req.file.path, {
-//         width: 500,
-//         height: 500,
-//         crop: "scale",
-//         quality: 60
-//       });
-//       if (req.file.fieldname === "leagueIcon") {
-//         leagueIcon = result.secure_url;
-//       } else if (req.file.fieldname === "teamAIcon") {
-//         teamAIcon = result.secure_url;
-//       } else if (req.file.fieldname === "teamBIcon") {
-//         teamBIcon = result.secure_url;
-//       }
-//     }
-
-//     const updatedPrediction = await Admin.findByIdAndUpdate(
-//       req.params.id,
-//       { time, tip, status, formationA, formationB, league, category, leagueIcon, teamAIcon, teamBIcon, teamBPosition, teamAPosition, teamA, teamB, teamAscore, teamBscore, vip, showScore, date },
-//       { new: true }
-//     );
-
-//     res.status(200).json(updatedPrediction);
-//   }
-// });
 
 const updatePrediction = asyncHandler(async (req, res) => {
   const prediction = await Admin.findById(req.params.id);
