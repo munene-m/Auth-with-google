@@ -7,7 +7,7 @@ const {protect} = require('../middleware/authMiddleware')
 require('../passport.js')
  
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, confirmPassword, country, googleId, paid } = req.body;
+  const { username, email, password, country, googleId, paid } = req.body;
 
   if ((!username || !email || !password || !country) && !googleId)  {
     res.status(400);
@@ -20,11 +20,6 @@ const registerUser = asyncHandler(async (req, res) => {
   if (userExists) {
     res.status(400);
     throw new Error("User already exists!");
-  }
-
-  if (password !== confirmPassword) {
-    res.status(400);
-    throw new Error("Passwords do not match");
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -56,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
   const registerAdmin = asyncHandler(async (req, res) => {
-    const { username, email, password, confirmPassword, country, googleId, paid, isAdmin } = req.body;
+    const { username, email, password, country, googleId, paid, isAdmin } = req.body;
   
     if ((!username || !email || !password || !country) && !googleId)  {
       res.status(400);
@@ -70,11 +65,6 @@ const registerUser = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("User already exists!");
     }
-  
-    // if (password !== confirmPassword) {
-    //   res.status(400);
-    //   throw new Error("Passwords do not match");
-    // }
   
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
