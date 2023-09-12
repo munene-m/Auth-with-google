@@ -12,6 +12,7 @@ const bodyParser = require("body-parser")
 const authRoute = require('./routes/authRoute')
 const adminRoute = require('./routes/adminRoute')
 const sportRoute = require("./routes/sportRoute")
+const adsRoute = require('./routes/imageAdRoute')
 const PORT = 3000
 
 connectDB()
@@ -38,6 +39,7 @@ app.use(morgan('dev'));
 app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
 app.use("/sports", sportRoute)
+app.use("/ads", adsRoute)
 
 
 app.get('/', (req, res) => {
