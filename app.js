@@ -13,6 +13,7 @@ const authRoute = require('./routes/authRoute')
 const adminRoute = require('./routes/adminRoute')
 const sportRoute = require("./routes/sportRoute")
 const adsRoute = require('./routes/imageAdRoute')
+const timeRoute = require('./routes/timeRoute')
 const PORT = 3000
 
 connectDB()
@@ -40,6 +41,7 @@ app.use("/auth", authRoute)
 app.use("/predictions", adminRoute)
 app.use("/sports", sportRoute)
 app.use("/ads", adsRoute)
+app.use("/time", timeRoute)
 
 
 app.get('/', (req, res) => {
