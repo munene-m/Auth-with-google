@@ -21,7 +21,7 @@ cloudinary.config({
 });
 
 const createAd = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, link } = req.body;
   const image = req.file;
   if (!image) {
     res.status(400).json({ error: "Image is required" });
@@ -36,17 +36,18 @@ const createAd = async (req, res) => {
 
     const ad = await imageAd.create({
       image: result.secure_url,
-      title: title,
-      description: description
+      title,
+      description,
+      link
     });
-    res.status(201).json({ id: ad._id, image: ad.image, title: ad.title, description: ad.description });
+    res.status(201).json({ id: ad._id, image: ad.image, title: ad.title, description: ad.description, link: ad.link });
   } catch (err) {
     res.status(400).json({ error: "An error occured" });
   }
 };
 
 const updateAd = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, link } = req.body;
   const image = req.file;
 
   try {
@@ -69,6 +70,7 @@ const updateAd = async (req, res) => {
     existingAd.image = result.secure_url;
     existingAd.title = title;
     existingAd.description = description;
+    existingAd.link = link
 
     // Save the updated ad data to the database
     await existingAd.save();
@@ -78,6 +80,7 @@ const updateAd = async (req, res) => {
         image: existingAd.image,
         title: existingAd.title,
         description: existingAd.description,
+        link: existingAd.link
       });
   } catch (error) {
     console.error(error);
