@@ -21,6 +21,7 @@ cloudinary.config({
 });
 
 const createAd = async (req, res) => {
+  const { title } = req.body
   const image = req.file;
   if (!image) {
     res.status(400).json({ error: "Image is required" });
@@ -35,19 +36,21 @@ const createAd = async (req, res) => {
 
     const ad = await imageAd.create({
       image: result.secure_url,
+      title: title
     });
-    res.status(201).json({ id: ad._id, image: ad.image });
+    res.status(201).json({ id: ad._id, image: ad.image, title: ad.title });
   } catch (err) {
     res.status(400).json({ error: "An error occured" });
   }
 };
 
 const updateAd = async (req, res) => {
-    const image = req.file; // Assuming you receive the updated image as a file
+  const { title } = req.body
+    const image = req.file; 
   
-    if (!image) {
-      return res.status(400).json({ error: "Image is required" });
-    }
+    // if (!image) {
+    //   return res.status(400).json({ error: "Image is required" });
+    // }
   
     try {
       // First, check if the ad with the given ID exists
@@ -67,11 +70,12 @@ const updateAd = async (req, res) => {
   
       // Update the ad's image URL with the new secure URL from Cloudinary
       existingAd.image = result.secure_url;
+      existingAd.title = title
   
       // Save the updated ad data to the database
       await existingAd.save();
   
-      return res.status(200).json({ id: existingAd._id, image: existingAd.image });
+      return res.status(200).json({ id: existingAd._id, image: existingAd.image, title: existingAd.title });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "An error occurred when updating ad" });
