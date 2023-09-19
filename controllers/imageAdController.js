@@ -21,7 +21,7 @@ cloudinary.config({
 });
 
 const createAd = async (req, res) => {
-  const { title } = req.body
+  const { title, description } = req.body;
   const image = req.file;
   if (!image) {
     res.status(400).json({ error: "Image is required" });
@@ -36,52 +36,56 @@ const createAd = async (req, res) => {
 
     const ad = await imageAd.create({
       image: result.secure_url,
-      title: title
+      title: title,
+      description: description
     });
-    res.status(201).json({ id: ad._id, image: ad.image, title: ad.title });
+    res.status(201).json({ id: ad._id, image: ad.image, title: ad.title, description: ad.description });
   } catch (err) {
     res.status(400).json({ error: "An error occured" });
   }
 };
 
 const updateAd = async (req, res) => {
-  const { title } = req.body
-    const image = req.file; 
-  
-    // if (!image) {
-    //   return res.status(400).json({ error: "Image is required" });
-    // }
-  
-    try {
-      // First, check if the ad with the given ID exists
-      const existingAd = await imageAd.findById(req.params.id);
-  
-      if (!existingAd) {
-        return res.status(404).json({ error: "Ad not found" });
-      }
-  
-      // Upload the updated image to Cloudinary
-      const result = await cloudinary.uploader.upload(image.path, {
-        width: 500,
-        height: 500,
-        crop: "scale",
-        quality: 50,
-      });
-  
-      // Update the ad's image URL with the new secure URL from Cloudinary
-      existingAd.image = result.secure_url;
-      existingAd.title = title
-  
-      // Save the updated ad data to the database
-      await existingAd.save();
-  
-      return res.status(200).json({ id: existingAd._id, image: existingAd.image, title: existingAd.title });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "An error occurred when updating ad" });
+  const { title, description } = req.body;
+  const image = req.file;
+
+  try {
+    // First, check if the ad with the given ID exists
+    const existingAd = await imageAd.findById(req.params.id);
+
+    if (!existingAd) {
+      return res.status(404).json({ error: "Ad not found" });
     }
-  };
-  
+
+    // Upload the updated image to Cloudinary
+    const result = await cloudinary.uploader.upload(image.path, {
+      width: 500,
+      height: 500,
+      crop: "scale",
+      quality: 50,
+    });
+
+    // Update the ad's image URL with the new secure URL from Cloudinary
+    existingAd.image = result.secure_url;
+    existingAd.title = title;
+    existingAd.description = description;
+
+    // Save the updated ad data to the database
+    await existingAd.save();
+
+    return res.status(200).json({
+        id: existingAd._id,
+        image: existingAd.image,
+        title: existingAd.title,
+        description: existingAd.description,
+      });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred when updating ad" });
+  }
+};
 
 const getAd = async (req, res) => {
   try {
@@ -114,8 +118,8 @@ const deleteAd = async (req, res) => {
       res.status(404);
       throw new Error("Ad not found");
     }
-    await imageAd.findByIdAndDelete(req.params.id)
-    res.status(200).json({ message: "ad item deleted ✅" })
+    await imageAd.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "ad item deleted ✅" });
   } catch (error) {
     res.status(400).json(error);
   }
