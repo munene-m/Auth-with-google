@@ -14,6 +14,7 @@ const adminRoute = require('./routes/adminRoute')
 const sportRoute = require("./routes/sportRoute")
 const adsRoute = require('./routes/imageAdRoute')
 const timeRoute = require('./routes/timeRoute')
+const gameScoreRoute = require('./routes/gameScoreRoute')
 const PORT = 3000
 
 connectDB()
@@ -42,6 +43,7 @@ app.use("/predictions", adminRoute)
 app.use("/sports", sportRoute)
 app.use("/ads", adsRoute)
 app.use("/time", timeRoute)
+app.use("/score", gameScoreRoute)
 
 
 app.get('/', (req, res) => {
