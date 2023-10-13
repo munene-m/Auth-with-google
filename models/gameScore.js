@@ -4,8 +4,7 @@ const gameScoreSchema = new mongoose.Schema({
         type: String
     },
     gameScore:{
-        type: Boolean,
-        default: false
+        type: String
     }
 }, {timestamps:true})
 
