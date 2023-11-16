@@ -51,20 +51,14 @@ const createPrediction = async (req, res) => {
 
   try {
     const result = await cloudinary.uploader.upload(leagueIcon.path, {
-      width: 500,
-      height: 500,
       crop: "scale",
     });
 
     const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
-      width: 500,
-      height: 500,
       crop: "scale",
     });
 
     const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
-      width: 500,
-      height: 500,
       crop: "scale",
     });
 
@@ -154,8 +148,6 @@ const updatePrediction = async (req, res) => {
         const result = await cloudinary.uploader.upload(
           req.files["leagueIcon"][0].path,
           {
-            width: 500,
-            height: 500,
             crop: "scale",
           }
         );
@@ -166,8 +158,6 @@ const updatePrediction = async (req, res) => {
         const result2 = await cloudinary.uploader.upload(
           req.files["teamAIcon"][0].path,
           {
-            width: 500,
-            height: 500,
             crop: "scale",
           }
         );
@@ -178,8 +168,6 @@ const updatePrediction = async (req, res) => {
         const result3 = await cloudinary.uploader.upload(
           req.files["teamBIcon"][0].path,
           {
-            width: 500,
-            height: 500,
             crop: "scale",
           }
         );
