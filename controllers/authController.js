@@ -1,25 +1,30 @@
-const User = require('../models/User');
-const jwt = require("jsonwebtoken")
-const asyncHandler = require('express-async-handler');
-const bcrypt = require('bcrypt')
-const passport = require('passport')
-const {protect} = require('../middleware/authMiddleware')
-require('../passport.js')
- 
-const registerUser = asyncHandler(async (req, res) => {
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
+const passport = require("passport");
+require("../passport.js");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_FROM,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
+
+const registerUser = async (req, res) => {
   const { username, email, password, country, googleId, paid } = req.body;
 
-  if ((!username || !email || !password || !country) && !googleId)  {
-    res.status(400);
-    throw new Error("Please enter all the required fields");
+  if ((!username || !email || !password || !country) && !googleId) {
+    return res.status(400).json({ error: "Please enter all required fields" });
   }
 
   const userExists = await User.findOne({ email });
 
   // Check if user account exists in the database
   if (userExists) {
-    res.status(400);
-    throw new Error("User already exists!");
+    return res.status(400).json({ error: "User already exists!" });
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -30,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
     paid,
-    country
+    country,
   });
 
   if (user) {
@@ -44,182 +49,250 @@ const registerUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(400);
-    throw new Error("Invalid credentials");
+    res.status(400).json({ error: "Invalid credentials" });
   }
+};
+
+const registerAdmin = async (req, res) => {
+  const { username, email, password, country, googleId, paid, isAdmin } =
+    req.body;
+
+  if ((!username || !email || !password || !country) && !googleId) {
+    return res.status(400).json({ error: "Please enter all required fields" });
+  }
+
+  const userExists = await User.findOne({ email });
+
+  // Check if user account exists in the database
+  if (userExists) {
+    return res.status(400).json({ error: "User already exists!" });
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  const user = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+    paid,
+    country,
+    isAdmin: true,
+  });
+
+  if (user) {
+    res.status(201);
+    res.json({
+      _id: user.id,
+      username: user.username,
+      email: user.email,
+      paid: user.paid,
+      country: user.country,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400).json({ error: "Invalid credentials" });
+  }
+};
+
+//Log in user
+const loginUser = async (req, res) => {
+  const { email, password, googleId } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Please enter all required fields" });
+  }
+  const user = await User.findOne({ email });
+  if (user && (await bcrypt.compare(password, user.password))) {
+    res.status(200).json({
+      _id: user.id,
+      username: user.username,
+      email: user.email,
+      paid: user.paid,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } else {
+    return res
+      .status(400)
+      .json({ error: "The credentials you entered are invalid" });
+  }
+};
+
+const updateUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return res.status(404).json({ error: "This user does not exist" });
+  } else {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.status(200).json(updatedUser);
+  }
+};
+
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Please provide an email address" });
+  }
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ error: "Email does not exist" });
+  }
+  const userId = user._id;
+  const resetToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  user.passResetToken = resetToken;
+  await user.save();
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: "SportyPredict password reset",
+    text: `Click the following link to reset your password: \n ${process.env.CLIENT_URL}/reset-password/${resetToken}\n\n This link expires in 1 hour.`,
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Failed to send reset email" });
+    }
+
+    console.log("Email sent: " + info.response);
+    res.status(200).json({ message: "Password reset email sent" });
+  });
+};
+
+const changeUserPassword = async (req, res) => {
+  const { password, token } = req.body;
+  if (!password || !token) {
+    return res
+      .status(400)
+      .json({ message: "Please enter all the required fields" });
+  }
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
+
+    User.findOne({ passResetToken: token })
+      .then(async (user) => {
+        if (!user) {
+          return res.status(400).json({ error: "The token is invalid" });
+        }
+
+        // Verify that the token's user ID matches the user's ID
+        if (user._id.toString() !== userId) {
+          return res.status(401).json({ error: "Invalid token for this user" });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Update the user's password
+        await User.findByIdAndUpdate(
+          user._id,
+          { password: hashedPassword },
+          { new: true }
+        );
+        user.passResetToken = undefined;
+        await user.save();
+        res.status(200).json({ message: "Password changed successfully." });
+      })
+      .catch((error) => {
+        res.status(400).json({ error: "Failed to change password", error });
+      });
+  } catch (err) {
+    res.status(400).json({ error: "Failed to change password for user" });
+  }
+};
+
+// Log in user with Google
+const loginWithGoogle = passport.authenticate("google", {
+  scope: ["profile", "email"],
 });
 
-
-  const registerAdmin = asyncHandler(async (req, res) => {
-    const { username, email, password, country, googleId, paid, isAdmin } = req.body;
-  
-    if ((!username || !email || !password || !country) && !googleId)  {
-      res.status(400);
-      throw new Error("Please enter all the required fields");
-    }
-  
-    const userExists = await User.findOne({ email });
-  
-    // Check if user account exists in the database
-    if (userExists) {
-      res.status(400);
-      throw new Error("User already exists!");
-    }
-  
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-  
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      paid,
-      country,
-      isAdmin: true
-    });
-  
-    if (user) {
-      res.status(201);
-      res.json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        paid: user.paid,
-        country: user.country,
-        isAdmin: user.isAdmin,
-        token: generateToken(user._id),
-      });
-    } else {
-      res.status(400);
-      throw new Error("Invalid credentials");
-    }
-  });
-  
-  
-  //Log in user
-  const loginUser = asyncHandler(async (req, res) => {
-    const { email, password, googleId } = req.body;
-
-    if (!email || !password) {
-      res.status(400);
-      throw new Error("Please enter all the required fields");
-    } 
-    const user = await User.findOne({email})
-    if(user && (await bcrypt.compare(password, user.password))){
-      res.status(200).json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        paid: user.paid,
-        isAdmin: user.isAdmin,
-        token: generateToken(user._id),
-      });
-    } else {
-      res.status(400);
-      throw new Error("The credentials you entered are invalid");
-    }
-
-  });
-
-  const updateUser = asyncHandler( async( req, res ) => {
-    const user = await User.findById(req.params.id);
-  
-    if(!user) {
-        res.status(404);
-        throw new Error("User does not exist");
-    }else{
-      const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      res.status(200).json(updatedUser);
-    }
-  
-  });
-
-  const reset = asyncHandler(async (req, res) => {
-    const { email, password } = req.body
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      res.status(404);
-      throw new Error('User does not exist');
-    }
-      // Hash the new password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Update the user's password
-  user.password = hashedPassword;
-  const updatedUser = await user.save();
-
-
-  // Exclude the password field from the response
-  const userWithoutPassword = await User.findById(updatedUser._id).select('-password');
-
-  res.status(200).json(userWithoutPassword);
-  })
-
-  // Log in user with Google
- const loginWithGoogle = passport.authenticate("google", {
-    scope: ["profile", "email"],
-  });
-  
-  // Callback for Google authentication
- const googleAuthCallback = [ passport.authenticate("google", {
+// Callback for Google authentication
+const googleAuthCallback = [
+  passport.authenticate("google", {
     failureRedirect: "/login",
     successRedirect: "/auth/googleCredentials",
-  })]
+  }),
+];
 
-  const getCredentials = asyncHandler(async (req, res) => {
-    res.status(200).json(req.user);
-  });
+const getCredentials = (req, res) => {
+  res.status(200).json(req.user);
+};
 
-  const getVipUsers = asyncHandler(async (req, res) => {
-    const vipUsers = await User.find({paid: true})
-    if(!vipUsers){
-      res.status(400).json("Vip users not found")
-    } else {
-      res.json(vipUsers)
+const getVipUsers = async (req, res) => {
+  const vipUsers = await User.find({ paid: true });
+  if (!vipUsers) {
+    res.status(400).json("Vip users not found");
+  } else {
+    res.json(vipUsers);
+  }
+};
+
+const getUsers = async (req, res) => {
+  const users = await User.find();
+  if (!users) {
+    res.status(400).json("Users not found");
+  } else {
+    res.json(users);
+  }
+};
+const getUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(400).json("User not found");
+  } else {
+    res.json(user);
+  }
+};
+
+const redirectUser = async (req, res) => {
+  res.status(200).json({ redirectTo: "/" });
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res.status(404);
+      throw new Error("Prediction not found");
     }
-  })
-
-  const getUsers = asyncHandler(async (req, res) => {
-    const users = await User.find()
-    if(!users){
-      res.status(400).json("Users not found")
-    } else {
-      res.json(users)
-    }
-  })
-  const getUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id)
-    if(!user){
-      res.status(400).json("User not found")
-    } else {
-      res.json(user)
-    }
-  })
-
-  const redirectUser = asyncHandler(async (req, res) => {
-    res.status(200).json({ redirectTo: '/' })
-  });
-  
-  const deleteUser = asyncHandler(async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id)
-        if (!user) {
-            res.status(404);
-            throw new Error("Prediction not found");
-          }
-        await User.findByIdAndDelete(req.params.id)
-        res.status(200).json({id: req.params.id, message: "User account deleted"})
+    await User.findByIdAndDelete(req.params.id);
+    res
+      .status(200)
+      .json({ id: req.params.id, message: "User account deleted" });
     return;
   } catch (err) {
-        console.log(err);
-    }
-})
-  
-  const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-  };
+    console.log(err);
+  }
+};
 
-  module.exports = { registerUser, registerAdmin, loginUser, updateUser, reset, loginWithGoogle, googleAuthCallback, getUsers, getUser, deleteUser, getVipUsers,getCredentials, redirectUser }
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+};
+
+module.exports = {
+  registerUser,
+  registerAdmin,
+  loginUser,
+  requestPasswordReset,
+  changeUserPassword,
+  updateUser,
+  loginWithGoogle,
+  googleAuthCallback,
+  getUsers,
+  getUser,
+  deleteUser,
+  getVipUsers,
+  getCredentials,
+  redirectUser,
+};
