@@ -23,8 +23,6 @@ cloudinary.config({
 const handleImageUpload = async (imageFile) => {
   try {
     const result = await cloudinary.uploader.upload(imageFile.path, {
-      width: 500,
-      height: 500,
       crop: "scale",
     });
     return result.secure_url;
@@ -487,8 +485,6 @@ const updatePrediction = async (req, res) => {
         const result = await cloudinary.uploader.upload(
           req.files["leagueIcon"][0].path,
           {
-            width: 500,
-            height: 500,
             crop: "scale",
           }
         );
@@ -499,8 +495,6 @@ const updatePrediction = async (req, res) => {
         const result2 = await cloudinary.uploader.upload(
           req.files["teamAIcon"][0].path,
           {
-            width: 500,
-            height: 500,
             crop: "scale",
           }
         );
@@ -511,8 +505,6 @@ const updatePrediction = async (req, res) => {
         const result3 = await cloudinary.uploader.upload(
           req.files["teamBIcon"][0].path,
           {
-            width: 500,
-            height: 500,
             crop: "scale",
           }
         );
