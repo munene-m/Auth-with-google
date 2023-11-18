@@ -40,8 +40,8 @@ const registerUser = async (req, res) => {
   });
 
   if (user) {
-    res.status(201);
-    res.json({
+    await sendVerificationEmail(user.id, user.email);
+    res.status(201).json({
       _id: user.id,
       username: user.username,
       email: user.email,
@@ -82,8 +82,8 @@ const registerAdmin = async (req, res) => {
   });
 
   if (user) {
-    res.status(201);
-    res.json({
+    await sendVerificationEmail(user.id, user.email);
+    res.status(201).json({
       _id: user.id,
       username: user.username,
       email: user.email,
@@ -131,6 +131,70 @@ const updateUser = async (req, res) => {
       new: true,
     });
     res.status(200).json(updatedUser);
+  }
+};
+
+const sendVerificationEmail = async (userId, userEmail) => {
+  try {
+    const user = await User.findById(userId);
+    const verificationToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    user.verificationToken = verificationToken;
+    await user.save();
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: userEmail,
+      subject: "SportyPredict Account Verification",
+      text: `Click the link below to verify your email. \n \n ${process.env.CLIENT_URL}/verify-user/${verificationToken}\n\n This link expires in 1 hour`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+        return res
+          .status(500)
+          .json({ error: "Failed to send account verification email" });
+      }
+
+      console.log("Email sent: " + info.response);
+      res.status(200).json({ message: "Account verification email sent" });
+    });
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to send account verification email.");
+  }
+};
+
+const verifyUser = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
+
+    // Check if the user with userId exists in the database
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the user's verification token matches the received token
+    if (user.verificationToken !== token) {
+      return res.status(400).json({ error: "Invalid verification token" });
+    }
+
+    // Mark the user as verified and clear the verification token
+    user.isVerified = true;
+    user.verificationToken = null;
+    await user.save();
+
+    return res.status(200).json({ message: "Account successfully verified" });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ error: "Invalid or expired token" });
   }
 };
 
@@ -287,6 +351,7 @@ module.exports = {
   loginUser,
   requestPasswordReset,
   changeUserPassword,
+  verifyUser,
   updateUser,
   loginWithGoogle,
   googleAuthCallback,

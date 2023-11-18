@@ -21,6 +21,13 @@ const userSchema = new mongoose.Schema(
     passResetToken: {
       type: String,
     },
+    verificationToken: {
+      type: String,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
     country: {
       type: String,
       required: true,

@@ -4,6 +4,7 @@ const {
   registerUser,
   registerAdmin,
   getCredentials,
+  verifyUser,
   getUsers,
   redirectUser,
   getVipUsers,
@@ -25,6 +26,7 @@ router.route("/getVip").get(protect, getVipUsers);
 router.route("/googleCredentials").get(redirectUser);
 router.route("/register").post(registerUser);
 router.route("/register-admin").post(registerAdmin);
+router.route("/verify/:token").post(verifyUser);
 router.route("/login").post(loginUser);
 router.route("/update/:id").put(updateUser);
 router.route("/request-reset").post(requestPasswordReset);
