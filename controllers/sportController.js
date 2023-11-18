@@ -36,6 +36,7 @@ const createPrediction = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
+    description,
   } = req.body;
   const sport = req.params.sport;
 
@@ -78,6 +79,7 @@ const createPrediction = async (req, res) => {
       teamBscore,
       sport,
       date,
+      description,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url,
@@ -103,6 +105,7 @@ const createPrediction = async (req, res) => {
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
       date: prediction.date,
+      description: prediction.description,
     });
   } catch (error) {
     console.log(error);
@@ -136,6 +139,7 @@ const updatePrediction = async (req, res) => {
       teamBscore,
       showScore,
       date,
+      description,
     } = req.body;
     const vip = req.params.vip;
 
@@ -196,6 +200,7 @@ const updatePrediction = async (req, res) => {
           leagueIcon,
           teamAIcon,
           teamBIcon,
+          description,
         },
         { new: true }
       );

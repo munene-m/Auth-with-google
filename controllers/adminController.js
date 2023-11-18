@@ -48,6 +48,7 @@ const createPrediction = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
+    description,
   } = req.body;
 
   const leagueIcon = req.files["leagueIcon"][0];
@@ -80,6 +81,7 @@ const createPrediction = async (req, res) => {
       teamAscore,
       teamBscore,
       date,
+      description,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -104,6 +106,7 @@ const createPrediction = async (req, res) => {
       teamAIcon: prediction.teamAIcon,
       teamBIcon: prediction.teamBIcon,
       date: prediction.date,
+      description: prediction.description,
     });
   } catch (error) {
     console.log(error);
@@ -129,6 +132,7 @@ const createVipPrediction = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
+    description,
   } = req.body;
   const vip = req.params.vip;
 
@@ -163,6 +167,7 @@ const createVipPrediction = async (req, res) => {
       teamBscore,
       vip,
       date,
+      description,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -188,6 +193,7 @@ const createVipPrediction = async (req, res) => {
       teamBIcon: prediction.teamBIcon,
       vip: prediction.vip,
       date: prediction.date,
+      description: prediction.description,
     });
   } catch (error) {
     console.log(error);
@@ -213,6 +219,7 @@ const createFreeTip = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
+    description,
   } = req.body;
   const freeTip = req.params.freeTip;
 
@@ -247,6 +254,7 @@ const createFreeTip = async (req, res) => {
       teamBscore,
       freeTip,
       date,
+      description,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -272,6 +280,7 @@ const createFreeTip = async (req, res) => {
       teamBIcon: prediction.teamBIcon,
       freeTip: prediction.freeTip,
       date: prediction.date,
+      description: prediction.description,
     });
   } catch (error) {
     console.log(error);
@@ -297,6 +306,7 @@ const createUpcoming = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
+    description,
   } = req.body;
   const upcoming = req.params.upcoming;
 
@@ -331,6 +341,7 @@ const createUpcoming = async (req, res) => {
       teamBscore,
       upcoming,
       date,
+      description,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -356,6 +367,7 @@ const createUpcoming = async (req, res) => {
       teamBIcon: prediction.teamBIcon,
       upcoming: prediction.upcoming,
       date: prediction.date,
+      description: prediction.description,
     });
   } catch (error) {
     console.log(error);
@@ -381,6 +393,7 @@ const createBetOfTheDay = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
+    description,
   } = req.body;
   const betOfTheDay = req.params.betOfTheDay;
 
@@ -415,6 +428,7 @@ const createBetOfTheDay = async (req, res) => {
       teamBscore,
       betOfTheDay,
       date,
+      description,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -440,6 +454,7 @@ const createBetOfTheDay = async (req, res) => {
       teamBIcon: prediction.teamBIcon,
       betOfTheDay: prediction.betOfTheDay,
       date: prediction.date,
+      description: prediction.description,
     });
   } catch (error) {
     console.log(error);
@@ -473,6 +488,7 @@ const updatePrediction = async (req, res) => {
       teamBscore,
       showScore,
       date,
+      description,
     } = req.body;
     const vip = req.params.vip;
 
@@ -533,6 +549,7 @@ const updatePrediction = async (req, res) => {
           leagueIcon,
           teamAIcon,
           teamBIcon,
+          description,
         },
         { new: true }
       );
