@@ -147,7 +147,7 @@ const sendVerificationEmail = async (userId, userEmail) => {
       from: process.env.EMAIL_FROM,
       to: userEmail,
       subject: "SportyPredict Account Verification",
-      text: `Click the link below to verify your email. \n \n ${process.env.CLIENT_URL}/verify-user/${verificationToken}\n\n This link expires in 1 hour`,
+      text: `Click the link below to verify your email.\n\n ${process.env.CLIENT_URL}/verify-user/${verificationToken}\n\n This link expires in 1 hour`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -219,7 +219,7 @@ const requestPasswordReset = async (req, res) => {
     from: process.env.EMAIL_FROM,
     to: email,
     subject: "SportyPredict password reset",
-    text: `Click the following link to reset your password: \n ${process.env.CLIENT_URL}/reset-password/${resetToken}\n\n This link expires in 1 hour.`,
+    text: `Hi ${user.username}, \n We received a request to change your password. You can click the link below to proceed with creating a new password.\n\n ${process.env.CLIENT_URL}/reset-password/${resetToken}\n\n If you ignore this email, your password will not be changed.\n This link expires in 1 hour.`,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
