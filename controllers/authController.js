@@ -147,7 +147,11 @@ const sendVerificationEmail = async (userId, userEmail) => {
       from: process.env.EMAIL_FROM,
       to: userEmail,
       subject: "SportyPredict Account Verification",
-      text: `Click the link below to verify your email.\n\n ${process.env.CLIENT_URL}/verify-user/${verificationToken}\n\n This link expires in 1 hour`,
+      html: `
+        <p>Click the button below to verify your SportyPredict account email.</p>
+        <a href="${process.env.CLIENT_URL}/verify-user/${verificationToken}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px;">Verify Email</a>
+        <p>This link expires in 1 hour.</p>
+      `,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -218,8 +222,13 @@ const requestPasswordReset = async (req, res) => {
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to: email,
-    subject: "SportyPredict password reset",
-    text: `Hi ${user.username}, \n We received a request to change your password. You can click the link below to proceed with creating a new password.\n\n ${process.env.CLIENT_URL}/reset-password/${resetToken}\n\n If you ignore this email, your password will not be changed.\n This link expires in 1 hour.`,
+    subject: "SportyPredict Password Reset",
+    html: `
+      <p>Hi ${user.username},</p>
+      <p>We received a request to change your password. You can click the button below to proceed with creating a new password.</p>
+      <a href="${process.env.CLIENT_URL}/reset-password/${resetToken}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
+      <p style="margin-top: 10px">If you ignore this email, your password will not be changed. This link expires in 1 hour.</p>
+    `,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
