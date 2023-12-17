@@ -24,7 +24,7 @@ const createAd = async (req, res) => {
   const { title, description, link } = req.body;
   const image = req.file;
   if (!image) {
-    res.status(400).json({ error: "Image is required" });
+    return res.status(400).json({ error: "Image is required" });
   }
   try {
     const result = await cloudinary.uploader.upload(image.path, {
@@ -38,9 +38,15 @@ const createAd = async (req, res) => {
       image: result.secure_url,
       title,
       description,
-      link
+      link,
     });
-    res.status(201).json({ id: ad._id, image: ad.image, title: ad.title, description: ad.description, link: ad.link });
+    res.status(201).json({
+      id: ad._id,
+      image: ad.image,
+      title: ad.title,
+      description: ad.description,
+      link: ad.link,
+    });
   } catch (err) {
     res.status(400).json({ error: "An error occured" });
   }
@@ -70,18 +76,18 @@ const updateAd = async (req, res) => {
     existingAd.image = result.secure_url;
     existingAd.title = title;
     existingAd.description = description;
-    existingAd.link = link
+    existingAd.link = link;
 
     // Save the updated ad data to the database
     await existingAd.save();
 
     return res.status(200).json({
-        id: existingAd._id,
-        image: existingAd.image,
-        title: existingAd.title,
-        description: existingAd.description,
-        link: existingAd.link
-      });
+      id: existingAd._id,
+      image: existingAd.image,
+      title: existingAd.title,
+      description: existingAd.description,
+      link: existingAd.link,
+    });
   } catch (error) {
     console.error(error);
     return res
@@ -94,8 +100,7 @@ const getAd = async (req, res) => {
   try {
     const ad = await imageAd.findById(req.params.id);
     if (!ad) {
-      res.status(400);
-      throw new Error("This ad does not exist");
+      return res.status(400).json({ message: "This ad does not exist" });
     } else {
       res.status(200).json(ad);
     }
@@ -118,8 +123,7 @@ const deleteAd = async (req, res) => {
   try {
     const ad = await imageAd.findById(req.params.id);
     if (!ad) {
-      res.status(404);
-      throw new Error("Ad not found");
+      return res.status(404).json({ message: "Ad not found" });
     }
     await imageAd.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "ad item deleted ✅" });
