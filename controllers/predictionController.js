@@ -1,4 +1,4 @@
-const Admin = require("../models/Admin");
+const Admin = require("../models/prediction");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 
