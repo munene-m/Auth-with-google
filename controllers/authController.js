@@ -1,9 +1,9 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const { sendVerificationEmail } = require("../helpers/authHelper.js");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const { sendVerificationEmail } = require("../helpers/authHelper.js");
 require("../passport.js");
 
 const transporter = nodemailer.createTransport({
@@ -41,15 +41,22 @@ const registerUser = async (req, res) => {
   });
 
   if (user) {
-    await sendVerificationEmail(user.id, user.email);
-    res.status(201).json({
-      _id: user.id,
-      username: user.username,
-      email: user.email,
-      paid: user.paid,
-      country: user.country,
-      token: generateToken(user._id),
-    });
+    try {
+      await sendVerificationEmail(user.id, user.email);
+
+      res.status(201).json({
+        _id: user.id,
+        username: user.username,
+        email: user.email,
+        paid: user.paid,
+        country: user.country,
+        isVerified: user.isVerified,
+        token: generateToken(user._id),
+      });
+    } catch (verificationError) {
+      console.error(verificationError);
+      res.status(400).json({ error: verificationError });
+    }
   } else {
     res.status(400).json({ error: "Invalid credentials" });
   }
@@ -284,7 +291,7 @@ const getUsers = async (req, res) => {
   }
 };
 const getUser = async (req, res) => {
-  const user = await User.findById(req.params.id)
+  const user = await User.findById(req.params.id);
   if (!user) {
     res.status(400).json("User not found");
   } else {
