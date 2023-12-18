@@ -21,7 +21,7 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 
 router.route("/:date").get(getPredictions);
-router.route("/single/:id").get(getPrediction);
+router.route("/single/:date/:teamA/:teamB").get(getPrediction);
 router.route("/tips/:value/:date").get(getFreeTips);
 router.route("/vipPredictions/:value/:date").get(getVipPredictions);
 router.route("/upcomingPredictions/:value/:date").get(getUpcoming);
