@@ -62,9 +62,11 @@ const createPrediction = async (req, res) => {
   }
 
   try {
-    const leagueIconUrl = await handleImageUpload(leagueIcon);
-    const teamAIconUrl = await handleImageUpload(teamAIcon);
-    const teamBIconUrl = await handleImageUpload(teamBIcon);
+    const [leagueIconUrl, teamAIconUrl, teamBIconUrl] = await Promise.all([
+      handleImageUpload(leagueIcon),
+      handleImageUpload(teamAIcon),
+      handleImageUpload(teamBIcon),
+    ]);
 
     const prediction = await Admin.create({
       time,
@@ -87,31 +89,11 @@ const createPrediction = async (req, res) => {
       teamBIcon: teamBIconUrl,
     });
 
-    res.status(201).json({
-      _id: prediction._id,
-      time: prediction.time,
-      tip: prediction.tip,
-      status: prediction.status,
-      formationA: prediction.formationA,
-      formationB: prediction.formationB,
-      teamA: prediction.teamA,
-      teamB: prediction.teamB,
-      teamAscore: prediction.teamAscore,
-      teamBscore: prediction.teamBscore,
-      teamAPosition: prediction.teamAPosition,
-      teamBPosition: prediction.teamBPosition,
-      league: prediction.league,
-      category: prediction.category,
-      leagueIcon: prediction.leagueIcon,
-      teamAIcon: prediction.teamAIcon,
-      teamBIcon: prediction.teamBIcon,
-      date: prediction.date,
-      description: prediction.description,
-    });
+    res.status(201).json({ ...prediction.toObject() });
   } catch (error) {
     console.log(error);
     res
-      .status(500)
+      .status(400)
       .json({ error: "An error occurred when creating the prediction" });
   }
 };
@@ -147,9 +129,11 @@ const createVipPrediction = async (req, res) => {
   }
 
   try {
-    const leagueIconUrl = await handleImageUpload(leagueIcon);
-    const teamAIconUrl = await handleImageUpload(teamAIcon);
-    const teamBIconUrl = await handleImageUpload(teamBIcon);
+    const [leagueIconUrl, teamAIconUrl, teamBIconUrl] = await Promise.all([
+      handleImageUpload(leagueIcon),
+      handleImageUpload(teamAIcon),
+      handleImageUpload(teamBIcon),
+    ]);
 
     const prediction = await Admin.create({
       time,
@@ -198,7 +182,7 @@ const createVipPrediction = async (req, res) => {
   } catch (error) {
     console.log(error);
     res
-      .status(500)
+      .status(400)
       .json({ error: "An error occurred when creating the prediction" });
   }
 };
@@ -234,9 +218,11 @@ const createFreeTip = async (req, res) => {
   }
 
   try {
-    const leagueIconUrl = await handleImageUpload(leagueIcon);
-    const teamAIconUrl = await handleImageUpload(teamAIcon);
-    const teamBIconUrl = await handleImageUpload(teamBIcon);
+    const [leagueIconUrl, teamAIconUrl, teamBIconUrl] = await Promise.all([
+      handleImageUpload(leagueIcon),
+      handleImageUpload(teamAIcon),
+      handleImageUpload(teamBIcon),
+    ]);
 
     const prediction = await Admin.create({
       time,
@@ -260,32 +246,11 @@ const createFreeTip = async (req, res) => {
       teamBIcon: teamBIconUrl,
     });
 
-    res.status(201).json({
-      _id: prediction._id,
-      time: prediction.time,
-      tip: prediction.tip,
-      status: prediction.status,
-      formationA: prediction.formationA,
-      formationB: prediction.formationB,
-      teamA: prediction.teamA,
-      teamB: prediction.teamB,
-      teamAscore: prediction.teamAscore,
-      teamBscore: prediction.teamBscore,
-      teamAPosition: prediction.teamAPosition,
-      teamBPosition: prediction.teamBPosition,
-      league: prediction.league,
-      category: prediction.category,
-      leagueIcon: prediction.leagueIcon,
-      teamAIcon: prediction.teamAIcon,
-      teamBIcon: prediction.teamBIcon,
-      freeTip: prediction.freeTip,
-      date: prediction.date,
-      description: prediction.description,
-    });
+    res.status(201).json({ ...prediction.toObject() });
   } catch (error) {
     console.log(error);
     res
-      .status(500)
+      .status(400)
       .json({ error: "An error occurred when creating the prediction" });
   }
 };
@@ -321,10 +286,11 @@ const createUpcoming = async (req, res) => {
   }
 
   try {
-    const leagueIconUrl = await handleImageUpload(leagueIcon);
-    const teamAIconUrl = await handleImageUpload(teamAIcon);
-    const teamBIconUrl = await handleImageUpload(teamBIcon);
-
+    const [leagueIconUrl, teamAIconUrl, teamBIconUrl] = await Promise.all([
+      handleImageUpload(leagueIcon),
+      handleImageUpload(teamAIcon),
+      handleImageUpload(teamBIcon),
+    ]);
     const prediction = await Admin.create({
       time,
       tip,
@@ -347,32 +313,11 @@ const createUpcoming = async (req, res) => {
       teamBIcon: teamBIconUrl,
     });
 
-    res.status(201).json({
-      _id: prediction._id,
-      time: prediction.time,
-      tip: prediction.tip,
-      status: prediction.status,
-      formationA: prediction.formationA,
-      formationB: prediction.formationB,
-      teamA: prediction.teamA,
-      teamB: prediction.teamB,
-      teamAscore: prediction.teamAscore,
-      teamBscore: prediction.teamBscore,
-      teamAPosition: prediction.teamAPosition,
-      teamBPosition: prediction.teamBPosition,
-      league: prediction.league,
-      category: prediction.category,
-      leagueIcon: prediction.leagueIcon,
-      teamAIcon: prediction.teamAIcon,
-      teamBIcon: prediction.teamBIcon,
-      upcoming: prediction.upcoming,
-      date: prediction.date,
-      description: prediction.description,
-    });
+    res.status(201).json({ ...prediction.toObject() });
   } catch (error) {
     console.log(error);
     res
-      .status(500)
+      .status(400)
       .json({ error: "An error occurred when creating the prediction" });
   }
 };
@@ -408,9 +353,11 @@ const createBetOfTheDay = async (req, res) => {
   }
 
   try {
-    const leagueIconUrl = await handleImageUpload(leagueIcon);
-    const teamAIconUrl = await handleImageUpload(teamAIcon);
-    const teamBIconUrl = await handleImageUpload(teamBIcon);
+    const [leagueIconUrl, teamAIconUrl, teamBIconUrl] = await Promise.all([
+      handleImageUpload(leagueIcon),
+      handleImageUpload(teamAIcon),
+      handleImageUpload(teamBIcon),
+    ]);
 
     const prediction = await Admin.create({
       time,
@@ -434,32 +381,11 @@ const createBetOfTheDay = async (req, res) => {
       teamBIcon: teamBIconUrl,
     });
 
-    res.status(201).json({
-      _id: prediction._id,
-      time: prediction.time,
-      tip: prediction.tip,
-      status: prediction.status,
-      formationA: prediction.formationA,
-      formationB: prediction.formationB,
-      teamA: prediction.teamA,
-      teamB: prediction.teamB,
-      teamAscore: prediction.teamAscore,
-      teamBscore: prediction.teamBscore,
-      teamAPosition: prediction.teamAPosition,
-      teamBPosition: prediction.teamBPosition,
-      league: prediction.league,
-      category: prediction.category,
-      leagueIcon: prediction.leagueIcon,
-      teamAIcon: prediction.teamAIcon,
-      teamBIcon: prediction.teamBIcon,
-      betOfTheDay: prediction.betOfTheDay,
-      date: prediction.date,
-      description: prediction.description,
-    });
+    res.status(201).json({ ...prediction.toObject() });
   } catch (error) {
     console.log(error);
     res
-      .status(500)
+      .status(400)
       .json({ error: "An error occurred when creating the prediction" });
   }
 };
@@ -471,32 +397,35 @@ const updatePrediction = async (req, res) => {
     return res
       .status(404)
       .json({ message: "Prediction you tried to update does not exist" });
-  } else {
-    const {
-      time,
-      tip,
-      status,
-      formationA,
-      formationB,
-      league,
-      teamAPosition,
-      teamBPosition,
-      category,
-      teamA,
-      teamB,
-      teamAscore,
-      teamBscore,
-      showScore,
-      date,
-      description,
-    } = req.body;
-    const vip = req.params.vip;
+  }
 
-    try {
-      let leagueIcon = prediction.leagueIcon;
-      let teamAIcon = prediction.teamAIcon;
-      let teamBIcon = prediction.teamBIcon;
+  const {
+    time,
+    tip,
+    status,
+    formationA,
+    formationB,
+    league,
+    teamAPosition,
+    teamBPosition,
+    category,
+    teamA,
+    teamB,
+    teamAscore,
+    teamBscore,
+    showScore,
+    date,
+    description,
+  } = req.body;
+  const vip = req.params.vip;
 
+  try {
+    let leagueIcon = prediction.leagueIcon;
+    let teamAIcon = prediction.teamAIcon;
+    let teamBIcon = prediction.teamBIcon;
+
+    // Define functions for uploading images
+    const uploadLeagueIcon = async () => {
       if (req.files["leagueIcon"]) {
         const result = await cloudinary.uploader.upload(
           req.files["leagueIcon"][0].path,
@@ -506,67 +435,83 @@ const updatePrediction = async (req, res) => {
         );
         leagueIcon = result.secure_url;
       }
+    };
 
+    const uploadTeamAIcon = async () => {
       if (req.files["teamAIcon"]) {
-        const result2 = await cloudinary.uploader.upload(
+        const result = await cloudinary.uploader.upload(
           req.files["teamAIcon"][0].path,
           {
             crop: "scale",
           }
         );
-        teamAIcon = result2.secure_url;
+        teamAIcon = result.secure_url;
       }
+    };
 
+    const uploadTeamBIcon = async () => {
       if (req.files["teamBIcon"]) {
-        const result3 = await cloudinary.uploader.upload(
+        const result = await cloudinary.uploader.upload(
           req.files["teamBIcon"][0].path,
           {
             crop: "scale",
           }
         );
-        teamBIcon = result3.secure_url;
+        teamBIcon = result.secure_url;
       }
+    };
 
-      const updatedPrediction = await Admin.findByIdAndUpdate(
-        req.params.id,
-        {
-          time,
-          tip,
-          status,
-          formationA,
-          formationB,
-          teamAPosition,
-          teamBPosition,
-          league,
-          category,
-          teamA,
-          teamB,
-          teamAscore,
-          teamBscore,
-          vip,
-          showScore,
-          date,
-          leagueIcon,
-          teamAIcon,
-          teamBIcon,
-          description,
-        },
-        { new: true }
-      );
+    // Parallelize file uploads
+    await Promise.all([
+      uploadLeagueIcon(),
+      uploadTeamAIcon(),
+      uploadTeamBIcon(),
+    ]);
 
-      res.status(200).json(updatedPrediction);
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "An error occurred when updating the prediction" });
-    }
+    const updatedPrediction = await Admin.findByIdAndUpdate(
+      req.params.id,
+      {
+        time,
+        tip,
+        status,
+        formationA,
+        formationB,
+        teamAPosition,
+        teamBPosition,
+        league,
+        category,
+        teamA,
+        teamB,
+        teamAscore,
+        teamBscore,
+        vip,
+        showScore,
+        date,
+        leagueIcon,
+        teamAIcon,
+        teamBIcon,
+        description,
+      },
+      { new: true }
+    );
+
+    res.status(200).json(updatedPrediction);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred when updating the prediction" });
   }
 };
 
 const getPrediction = async (req, res) => {
   try {
-    const prediction = await Admin.findById(req.params.id);
+    const prediction = await Admin.findOne({
+      // _id: req.params.id,
+      date: req.params.date,
+      teamA: req.params.teamA,
+      teamB: req.params.teamB,
+    });
     if (!prediction) {
       return res.status(404).json({ message: "Prediction not found" });
     } else {
@@ -670,7 +615,7 @@ const getPredictions = async (req, res) => {
   } catch (err) {
     console.log(err);
     res
-      .status(500)
+      .status(400)
       .json({ error: "An error occurred when fetching predictions" });
   }
 };
