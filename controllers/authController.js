@@ -3,7 +3,10 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const { sendVerificationEmail } = require("../helpers/authHelper.js");
+const {
+  sendVerificationEmail,
+  sendNewsletter,
+} = require("../helpers/authHelper.js");
 require("../passport.js");
 
 const transporter = nodemailer.createTransport({
@@ -42,7 +45,7 @@ const registerUser = async (req, res) => {
 
   if (user) {
     try {
-      await sendVerificationEmail(user.id, user.email);
+      await sendVerificationEmail(user._id, user.email);
 
       res.status(201).json({
         _id: user.id,
@@ -166,7 +169,9 @@ const verifyUser = async (req, res) => {
     user.verificationToken = null;
     await user.save();
 
-    return res.status(200).json({ message: "Account successfully verified" });
+    await sendNewsletter(user.email, user.username);
+
+    res.status(200).json({ message: "Account successfully verified" });
   } catch (error) {
     console.error(error);
     return res.status(400).json({ error: "Invalid or expired token" });
