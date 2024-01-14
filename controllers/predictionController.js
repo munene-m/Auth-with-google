@@ -570,49 +570,34 @@ const updatePrediction = async (req, res) => {
     let teamAIcon = prediction.teamAIcon;
     let teamBIcon = prediction.teamBIcon;
 
-    // Define functions for uploading images
-    const uploadLeagueIcon = async () => {
-      if (req.files["leagueIcon"]) {
+    const handleImageUpload = async (fieldName) => {
+      if (req.files[fieldName]) {
         const result = await cloudinary.uploader.upload(
-          req.files["leagueIcon"][0].path,
-          {
-            crop: "scale",
-          }
+          req.files[fieldName][0].path
         );
-        leagueIcon = result.secure_url;
+        return result.secure_url;
       }
-    };
-
-    const uploadTeamAIcon = async () => {
-      if (req.files["teamAIcon"]) {
-        const result = await cloudinary.uploader.upload(
-          req.files["teamAIcon"][0].path,
-          {
-            crop: "scale",
-          }
-        );
-        teamAIcon = result.secure_url;
-      }
-    };
-
-    const uploadTeamBIcon = async () => {
-      if (req.files["teamBIcon"]) {
-        const result = await cloudinary.uploader.upload(
-          req.files["teamBIcon"][0].path,
-          {
-            crop: "scale",
-          }
-        );
-        teamBIcon = result.secure_url;
-      }
+      return null;
     };
 
     // Parallelize file uploads
-    await Promise.all([
-      uploadLeagueIcon(),
-      uploadTeamAIcon(),
-      uploadTeamBIcon(),
-    ]);
+    const [uploadedLeagueIcon, uploadedTeamAIcon, uploadedTeamBIcon] =
+      await Promise.allSettled([
+        handleImageUpload("leagueIcon"),
+        handleImageUpload("teamAIcon"),
+        handleImageUpload("teamBIcon"),
+      ]);
+
+    // Update icons if they were successfully uploaded
+    if (uploadedLeagueIcon.status === "fulfilled" && uploadedLeagueIcon.value) {
+      leagueIcon = uploadedLeagueIcon.value;
+    }
+    if (uploadedTeamAIcon.status === "fulfilled" && uploadedTeamAIcon.value) {
+      teamAIcon = uploadedTeamAIcon.value;
+    }
+    if (uploadedTeamBIcon.status === "fulfilled" && uploadedTeamBIcon.value) {
+      teamBIcon = uploadedTeamBIcon.value;
+    }
 
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
@@ -645,7 +630,7 @@ const updatePrediction = async (req, res) => {
   } catch (error) {
     console.error(error);
     res
-      .status(500)
+      .status(400)
       .json({ error: "An error occurred when updating the prediction" });
   }
 };
