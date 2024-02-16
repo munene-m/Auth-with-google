@@ -47,6 +47,7 @@ const createPrediction = async (req, res) => {
     teamBscore,
     date,
     description,
+    statistics,
   } = req.body;
 
   // Assuming leagueIcon, teamAIcon, and teamBIcon are sent as strings or files
@@ -100,6 +101,7 @@ const createPrediction = async (req, res) => {
         return res.status(400).json({ error: "Invalid teamBIcon URL" });
       }
     }
+    const parsedStats = JSON.parse(statistics);
 
     const prediction = await Admin.create({
       time,
@@ -116,6 +118,7 @@ const createPrediction = async (req, res) => {
       teamAscore,
       teamBscore,
       date,
+      statistics: parsedStats,
       description,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
@@ -148,6 +151,7 @@ const createVipPrediction = async (req, res) => {
     teamBscore,
     date,
     description,
+    statistics,
   } = req.body;
   const vip = req.params.vip;
 
@@ -202,6 +206,8 @@ const createVipPrediction = async (req, res) => {
       }
     }
 
+    const parsedStats = JSON.parse(statistics);
+
     const prediction = await Admin.create({
       time,
       tip,
@@ -219,6 +225,7 @@ const createVipPrediction = async (req, res) => {
       vip,
       date,
       description,
+      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -250,6 +257,7 @@ const createFreeTip = async (req, res) => {
     teamBscore,
     date,
     description,
+    statistics,
   } = req.body;
   const freeTip = req.params.freeTip;
 
@@ -303,6 +311,7 @@ const createFreeTip = async (req, res) => {
       }
     }
 
+    const parsedStats = JSON.parse(statistics);
     const prediction = await Admin.create({
       time,
       tip,
@@ -320,6 +329,7 @@ const createFreeTip = async (req, res) => {
       freeTip,
       date,
       description,
+      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -350,6 +360,7 @@ const createUpcoming = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
+    statistics,
     description,
   } = req.body;
   const upcoming = req.params.upcoming;
@@ -403,6 +414,7 @@ const createUpcoming = async (req, res) => {
         return res.status(400).json({ error: "Invalid teamBIcon URL" });
       }
     }
+    const parsedStats = JSON.parse(statistics);
 
     const prediction = await Admin.create({
       time,
@@ -421,6 +433,7 @@ const createUpcoming = async (req, res) => {
       upcoming,
       date,
       description,
+      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -452,6 +465,7 @@ const createBetOfTheDay = async (req, res) => {
     teamBscore,
     date,
     description,
+    statistics,
   } = req.body;
   const betOfTheDay = req.params.betOfTheDay;
 
@@ -522,6 +536,7 @@ const createBetOfTheDay = async (req, res) => {
       betOfTheDay,
       date,
       description,
+      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -537,101 +552,73 @@ const createBetOfTheDay = async (req, res) => {
 };
 
 const updatePrediction = async (req, res) => {
-  const prediction = await Admin.findById(req.params.id);
-
-  if (!prediction) {
-    return res
-      .status(404)
-      .json({ message: "Prediction you tried to update does not exist" });
-  }
-
-  const {
-    time,
-    tip,
-    status,
-    formationA,
-    formationB,
-    league,
-    teamAPosition,
-    teamBPosition,
-    category,
-    teamA,
-    teamB,
-    teamAscore,
-    teamBscore,
-    showScore,
-    date,
-    description,
-  } = req.body;
-  const vip = req.params.vip;
-
   try {
-    let leagueIcon = prediction.leagueIcon;
-    let teamAIcon = prediction.teamAIcon;
-    let teamBIcon = prediction.teamBIcon;
+    const prediction = await Admin.findById(req.params.id);
 
-    const handleImageUpload = async (fieldName) => {
-      if (req.files[fieldName]) {
-        const result = await cloudinary.uploader.upload(
-          req.files[fieldName][0].path
-        );
-        return result.secure_url;
-      }
-      return null;
+    if (!prediction) {
+      return res.status(404).json({ message: "Prediction not found" });
+    }
+
+    // Extract fields from request body
+    const {
+      time,
+      tip,
+      status,
+      formationA,
+      formationB,
+      league,
+      teamAPosition,
+      teamBPosition,
+      category,
+      teamA,
+      teamB,
+      teamAscore,
+      teamBscore,
+      showScore,
+      date,
+      description,
+      statistics, // Assuming statistics is part of the request body
+    } = req.body;
+
+    // Prepare updateFields object with mandatory fields
+    const updateFields = {
+      time,
+      tip,
+      status,
+      formationA,
+      formationB,
+      teamAPosition,
+      teamBPosition,
+      league,
+      category,
+      teamA,
+      teamB,
+      teamAscore,
+      teamBscore,
+      showScore,
+      date,
+      description,
     };
 
-    // Parallelize file uploads
-    const [uploadedLeagueIcon, uploadedTeamAIcon, uploadedTeamBIcon] =
-      await Promise.allSettled([
-        handleImageUpload("leagueIcon"),
-        handleImageUpload("teamAIcon"),
-        handleImageUpload("teamBIcon"),
-      ]);
-
-    // Update icons if they were successfully uploaded
-    if (uploadedLeagueIcon.status === "fulfilled" && uploadedLeagueIcon.value) {
-      leagueIcon = uploadedLeagueIcon.value;
-    }
-    if (uploadedTeamAIcon.status === "fulfilled" && uploadedTeamAIcon.value) {
-      teamAIcon = uploadedTeamAIcon.value;
-    }
-    if (uploadedTeamBIcon.status === "fulfilled" && uploadedTeamBIcon.value) {
-      teamBIcon = uploadedTeamBIcon.value;
+    // Include statistics in updateFields if it exists in the request body
+    if (statistics !== undefined) {
+      // Parse statistics if it exists in the request body
+      const parsedStatistics = statistics ? JSON.parse(statistics) : null;
+      updateFields.statistics = parsedStatistics;
     }
 
+    // Find and update the prediction
     const updatedPrediction = await Admin.findByIdAndUpdate(
       req.params.id,
-      {
-        time,
-        tip,
-        status,
-        formationA,
-        formationB,
-        teamAPosition,
-        teamBPosition,
-        league,
-        category,
-        teamA,
-        teamB,
-        teamAscore,
-        teamBscore,
-        vip,
-        showScore,
-        date,
-        leagueIcon,
-        teamAIcon,
-        teamBIcon,
-        description,
-      },
+      updateFields,
       { new: true }
     );
 
+    // Return the updated prediction
     res.status(200).json(updatedPrediction);
   } catch (error) {
     console.error(error);
-    res
-      .status(400)
-      .json({ error: "An error occurred when updating the prediction" });
+    res.status(400).json({ error });
   }
 };
 
