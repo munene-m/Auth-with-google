@@ -15,6 +15,7 @@ const sportRoute = require("./routes/sportRoute");
 const adsRoute = require("./routes/imageAdRoute");
 const timeRoute = require("./routes/timeRoute");
 const gameScoreRoute = require("./routes/gameScoreRoute");
+const paymentRecordsRoute = require("./routes/paymentRoutes");
 const PORT = 3000;
 
 connectDB();
@@ -46,6 +47,7 @@ app.use("/sports", sportRoute);
 app.use("/ads", adsRoute);
 app.use("/time", timeRoute);
 app.use("/score", gameScoreRoute);
+app.use("/currencyPrices", paymentRecordsRoute);
 
 app.get("/", (req, res) => {
   const filePath = path.join(__dirname, "client", "index.html");
@@ -54,4 +56,11 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+process.on("SIGINT", async () => {
+  console.log("Shutting down...");
+
+  console.log("Goodbye!");
+  process.exit(0);
 });
