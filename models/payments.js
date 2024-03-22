@@ -5,10 +5,10 @@ const paymentSchema = new mongoose.Schema(
       type: String,
     },
     weeklyPrice: {
-      type: String,
+      type: Number,
     },
     monthlyPrice: {
-      type: String,
+      type: Number,
     },
   },
   { timestamps: true }
