@@ -84,9 +84,6 @@ const adminSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    statistics: {
-      type: Array,
-    },
   },
   { timestamps: true }
 );

@@ -37,7 +37,6 @@ const createPrediction = async (req, res) => {
     teamBscore,
     date,
     description,
-    statistics,
   } = req.body;
   const sport = req.params.sport;
 
@@ -64,8 +63,6 @@ const createPrediction = async (req, res) => {
       crop: "scale",
     });
 
-    const parsedStats = JSON.parse(statistics);
-
     const prediction = await Sport.create({
       time,
       tip,
@@ -83,7 +80,6 @@ const createPrediction = async (req, res) => {
       sport,
       date,
       description,
-      statistics: parsedStats,
       leagueIcon: result.secure_url,
       teamAIcon: result2.secure_url,
       teamBIcon: result3.secure_url,
@@ -125,7 +121,6 @@ const updatePrediction = async (req, res) => {
       showScore,
       date,
       description,
-      statistics, // Assuming statistics is part of the request body
     } = req.body;
     const vip = req.params.vip;
 
@@ -173,13 +168,6 @@ const updatePrediction = async (req, res) => {
       teamBIcon,
       description,
     };
-
-    // Include statistics in updateFields if it exists in the request body
-    if (statistics !== undefined) {
-      // Parse statistics if it exists in the request body
-      const parsedStatistics = statistics ? JSON.parse(statistics) : null;
-      updateFields.statistics = parsedStatistics;
-    }
 
     // Find and update the prediction
     const updatedPrediction = await Sport.findByIdAndUpdate(

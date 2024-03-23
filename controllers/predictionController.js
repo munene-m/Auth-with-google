@@ -47,7 +47,6 @@ const createPrediction = async (req, res) => {
     teamBscore,
     date,
     description,
-    statistics,
   } = req.body;
 
   // Assuming leagueIcon, teamAIcon, and teamBIcon are sent as strings or files
@@ -101,7 +100,6 @@ const createPrediction = async (req, res) => {
         return res.status(400).json({ error: "Invalid teamBIcon URL" });
       }
     }
-    const parsedStats = JSON.parse(statistics);
 
     const prediction = await Admin.create({
       time,
@@ -118,7 +116,6 @@ const createPrediction = async (req, res) => {
       teamAscore,
       teamBscore,
       date,
-      statistics: parsedStats,
       description,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
@@ -151,7 +148,6 @@ const createVipPrediction = async (req, res) => {
     teamBscore,
     date,
     description,
-    statistics,
   } = req.body;
   const vip = req.params.vip;
 
@@ -206,8 +202,6 @@ const createVipPrediction = async (req, res) => {
       }
     }
 
-    const parsedStats = JSON.parse(statistics);
-
     const prediction = await Admin.create({
       time,
       tip,
@@ -225,7 +219,6 @@ const createVipPrediction = async (req, res) => {
       vip,
       date,
       description,
-      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -257,7 +250,6 @@ const createFreeTip = async (req, res) => {
     teamBscore,
     date,
     description,
-    statistics,
   } = req.body;
   const freeTip = req.params.freeTip;
 
@@ -311,7 +303,6 @@ const createFreeTip = async (req, res) => {
       }
     }
 
-    const parsedStats = JSON.parse(statistics);
     const prediction = await Admin.create({
       time,
       tip,
@@ -329,7 +320,6 @@ const createFreeTip = async (req, res) => {
       freeTip,
       date,
       description,
-      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -360,7 +350,6 @@ const createUpcoming = async (req, res) => {
     teamAscore,
     teamBscore,
     date,
-    statistics,
     description,
   } = req.body;
   const upcoming = req.params.upcoming;
@@ -414,7 +403,6 @@ const createUpcoming = async (req, res) => {
         return res.status(400).json({ error: "Invalid teamBIcon URL" });
       }
     }
-    const parsedStats = JSON.parse(statistics);
 
     const prediction = await Admin.create({
       time,
@@ -433,7 +421,6 @@ const createUpcoming = async (req, res) => {
       upcoming,
       date,
       description,
-      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -465,7 +452,6 @@ const createBetOfTheDay = async (req, res) => {
     teamBscore,
     date,
     description,
-    statistics,
   } = req.body;
   const betOfTheDay = req.params.betOfTheDay;
 
@@ -536,7 +522,6 @@ const createBetOfTheDay = async (req, res) => {
       betOfTheDay,
       date,
       description,
-      statistics: parsedStats,
       leagueIcon: leagueIconUrl,
       teamAIcon: teamAIconUrl,
       teamBIcon: teamBIconUrl,
@@ -577,7 +562,6 @@ const updatePrediction = async (req, res) => {
       showScore,
       date,
       description,
-      statistics, // Assuming statistics is part of the request body
     } = req.body;
 
     // Prepare updateFields object with mandatory fields
@@ -599,13 +583,6 @@ const updatePrediction = async (req, res) => {
       date,
       description,
     };
-
-    // Include statistics in updateFields if it exists in the request body
-    if (statistics !== undefined) {
-      // Parse statistics if it exists in the request body
-      const parsedStatistics = statistics ? JSON.parse(statistics) : null;
-      updateFields.statistics = parsedStatistics;
-    }
 
     // Find and update the prediction
     const updatedPrediction = await Admin.findByIdAndUpdate(
