@@ -11,8 +11,8 @@ const {
 
 router.route("/create").post(protect, postPrices);
 router.route("/update/:id").put(protect, updatePrice);
-router.route("/:id").get(protect, getPrice);
-router.route("/").get(protect, getPrices);
+router.route("/:id").get(getPrice);
+router.route("/").get(getPrices);
 router.route("/delete/:id").delete(protect, deletPrice);
 
 module.exports = router;
