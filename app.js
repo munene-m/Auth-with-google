@@ -16,6 +16,7 @@ const adsRoute = require("./routes/imageAdRoute");
 const timeRoute = require("./routes/timeRoute");
 const gameScoreRoute = require("./routes/gameScoreRoute");
 const paymentRecordsRoute = require("./routes/paymentRoutes");
+const stripeRoute = require("./routes/stripeRoute");
 const PORT = 3000;
 
 connectDB();
@@ -48,6 +49,7 @@ app.use("/ads", adsRoute);
 app.use("/time", timeRoute);
 app.use("/score", gameScoreRoute);
 app.use("/currencyPrices", paymentRecordsRoute);
+app.use("/stripe", stripeRoute);
 
 app.get("/", (req, res) => {
   const filePath = path.join(__dirname, "client", "index.html");
