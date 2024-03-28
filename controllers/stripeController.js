@@ -1,5 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const CLIENT_DOMAIN = process.env.CLIENT_URL;
+const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
 
 const createCheckout = async (req, res) => {
   try {
@@ -28,6 +29,59 @@ const createCheckout = async (req, res) => {
   }
 };
 
-const createPortalSession = async (req, res) => {};
+const webhook = async (req, res) => {
+  const sig = request.headers["stripe-signature"];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (err) {
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  console.log(`Unhandled event type ${event.type}`);
+  let subscription;
+  let status;
+  // Handle the event
+  switch (event.type) {
+    case "customer.subscription.trial_will_end":
+      subscription = event.data.object;
+      status = subscription.status;
+      console.log(`Subscription status is ${status}.`);
+      // Then define and call a method to handle the subscription trial ending.
+      // handleSubscriptionTrialEnding(subscription);
+      break;
+    case "customer.subscription.deleted":
+      subscription = event.data.object;
+      status = subscription.status;
+      console.log(`Subscription status is ${status}.`);
+      // Then define and call a method to handle the subscription deleted.
+      // handleSubscriptionDeleted(subscriptionDeleted);
+      break;
+    case "customer.subscription.created":
+      subscription = event.data.object;
+      status = subscription.status;
+      console.log(`Subscription status is ${status}.`);
+      // Then define and call a method to handle the subscription created.
+      // handleSubscriptionCreated(subscription);
+      break;
+    case "customer.subscription.updated":
+      subscription = event.data.object;
+      status = subscription.status;
+      console.log(`Subscription status is ${status}.`);
+      // Then define and call a method to handle the subscription update.
+      // handleSubscriptionUpdated(subscription);
+      break;
+    default:
+      // Unexpected event type
+      console.log(`Unhandled event type ${event.type}.`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  res.send();
+};
 
 module.exports = { createCheckout };

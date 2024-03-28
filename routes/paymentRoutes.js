@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { protect } = require("../middleware/authMiddleware.js");
+const { adminProtect } = require("../middleware/authMiddleware.js");
 const {
   postPrices,
   updatePrice,
@@ -9,10 +9,10 @@ const {
   deletPrice,
 } = require("../controllers/paymentsController.js");
 
-router.route("/create").post(protect, postPrices);
-router.route("/update/:id").put(protect, updatePrice);
+router.route("/create").post(adminProtect, postPrices);
+router.route("/update/:id").put(adminProtect, updatePrice);
 router.route("/:id").get(getPrice);
 router.route("/").get(getPrices);
-router.route("/delete/:id").delete(protect, deletPrice);
+router.route("/delete/:id").delete(adminProtect, deletPrice);
 
 module.exports = router;

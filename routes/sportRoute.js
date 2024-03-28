@@ -10,12 +10,12 @@ const {
   getPredictions,
   deletePrediction,
 } = require("../controllers/sportController");
-const { protect } = require("../middleware/authMiddleware");
+const { adminProtect } = require("../middleware/authMiddleware");
 
 router
   .route("/create/:sport")
   .post(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -26,7 +26,7 @@ router
 router
   .route("/update/:id")
   .put(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -37,6 +37,6 @@ router
 router.route("/single/:date/:teamA/:teamB").get(getPrediction);
 router.route("/:date").get(getPredictions);
 router.route("/sport/:value/:date").get(getPredictionFromSport);
-router.route("/delete/:id").delete(protect, deletePrediction);
+router.route("/delete/:id").delete(adminProtect, deletePrediction);
 
 module.exports = router;

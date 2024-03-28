@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
     googleDisplayName: {
       type: String,
     },
+
     paid: {
       type: Boolean,
       default: false,
@@ -50,6 +51,15 @@ const userSchema = new mongoose.Schema(
     isAdmin: {
       type: Boolean,
       default: false,
+    },
+    plan: {
+      type: String,
+    },
+    activationDate: {
+      type: Date,
+    },
+    days: {
+      type: Number,
     },
   },
   { timestamps: true }

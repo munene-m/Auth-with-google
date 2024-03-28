@@ -18,18 +18,21 @@ const {
   getPredictionInCategory,
   deletePrediction,
 } = require("../controllers/predictionController");
-const { protect } = require("../middleware/authMiddleware");
+const { adminProtect } = require("../middleware/authMiddleware");
+const { checkVipStatus } = require("../middleware/vipMiddleware");
 
 router.route("/:date").get(getPredictions);
 router.route("/single/:date/:teamA/:teamB").get(getPrediction);
 router.route("/tips/:value/:date").get(getFreeTips);
-router.route("/vipPredictions/:value/:date").get(getVipPredictions);
+router
+  .route("/vipPredictions/:value/:date")
+  .get(checkVipStatus, getVipPredictions);
 router.route("/upcomingPredictions/:value/:date").get(getUpcoming);
 router.route("/bet/:value/:date").get(getBetOfTheDay);
 router
   .route("/create")
   .post(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -41,7 +44,7 @@ router
 router
   .route("/create/:vip")
   .post(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -53,7 +56,7 @@ router
 router
   .route("/create/tip/:freeTip")
   .post(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -65,7 +68,7 @@ router
 router
   .route("/create/upcoming/:upcoming")
   .post(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -77,7 +80,7 @@ router
 router
   .route("/create/bet/:betOfTheDay")
   .post(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -89,7 +92,7 @@ router
 router
   .route("/update/:id")
   .put(
-    protect,
+    adminProtect,
     upload.fields([
       { name: "leagueIcon" },
       { name: "teamAIcon" },
@@ -97,7 +100,7 @@ router
     ]),
     updatePrediction
   );
-router.route("/delete/:id").delete(protect, deletePrediction);
+router.route("/delete/:id").delete(adminProtect, deletePrediction);
 router.route("/prediction/:value/:date").get(getPredictionInCategory);
 
 module.exports = router;
