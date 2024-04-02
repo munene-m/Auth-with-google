@@ -20,6 +20,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const handleImageUpload = async (imageFile) => {
+  try {
+    const result = await cloudinary.uploader.upload(imageFile.path);
+    return result.secure_url;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error uploading image");
+  }
+};
+
 const createPrediction = async (req, res) => {
   const {
     time,
@@ -40,28 +50,56 @@ const createPrediction = async (req, res) => {
   } = req.body;
   const sport = req.params.sport;
 
-  const leagueIcon = req.files["leagueIcon"][0];
-  const teamAIcon = req.files["teamAIcon"][0];
-  const teamBIcon = req.files["teamBIcon"][0];
+  // Assuming leagueIcon, teamAIcon, and teamBIcon are sent as strings or files
+  const leagueIcon = req.files["leagueIcon"]
+    ? req.files["leagueIcon"][0]
+    : req.body["leagueIcon"];
+  const teamAIcon = req.files["teamAIcon"]
+    ? req.files["teamAIcon"][0]
+    : req.body["teamAIcon"];
+  const teamBIcon = req.files["teamBIcon"]
+    ? req.files["teamBIcon"][0]
+    : req.body["teamBIcon"];
 
-  // Validate the presence of file fields
-  if (!leagueIcon || !teamAIcon || !teamBIcon) {
+  if (
+    (req.files["leagueIcon"] ||
+      req.files["teamAIcon"] ||
+      req.files["teamBIcon"]) &&
+    (!leagueIcon || !teamAIcon || !teamBIcon)
+  ) {
     res.status(400).json({ error: "All image files are required" });
     return;
   }
 
   try {
-    const result = await cloudinary.uploader.upload(leagueIcon.path, {
-      crop: "scale",
-    });
+    let leagueIconUrl, teamAIconUrl, teamBIconUrl;
 
-    const result2 = await cloudinary.uploader.upload(teamAIcon.path, {
-      crop: "scale",
-    });
+    if (req.files["leagueIcon"]) {
+      leagueIconUrl = await handleImageUpload(leagueIcon);
+    } else {
+      leagueIconUrl = leagueIcon;
+      if (typeof leagueIconUrl !== "string") {
+        return res.status(400).json({ error: "Invalid leagueIcon URL" });
+      }
+    }
 
-    const result3 = await cloudinary.uploader.upload(teamBIcon.path, {
-      crop: "scale",
-    });
+    if (req.files["teamAIcon"]) {
+      teamAIconUrl = await handleImageUpload(teamAIcon);
+    } else {
+      teamAIconUrl = teamAIcon;
+      if (typeof teamAIconUrl !== "string") {
+        return res.status(400).json({ error: "Invalid teamAIcon URL" });
+      }
+    }
+
+    if (req.files["teamBIcon"]) {
+      teamBIconUrl = await handleImageUpload(teamBIcon);
+    } else {
+      teamBIconUrl = teamBIcon;
+      if (typeof teamBIconUrl !== "string") {
+        return res.status(400).json({ error: "Invalid teamBIcon URL" });
+      }
+    }
 
     const prediction = await Sport.create({
       time,
@@ -80,9 +118,9 @@ const createPrediction = async (req, res) => {
       sport,
       date,
       description,
-      leagueIcon: result.secure_url,
-      teamAIcon: result2.secure_url,
-      teamBIcon: result3.secure_url,
+      leagueIcon: leagueIconUrl,
+      teamAIcon: teamAIconUrl,
+      teamBIcon: teamBIconUrl,
     });
 
     res.status(201).json({
