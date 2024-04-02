@@ -12,20 +12,25 @@ const checkVipStatus = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       const user = await User.findById(decoded.id).select("-password");
-      const activationDate = new Date(user?.activationDate);
-      const currentDate = new Date();
-      const timeDiff = Math.abs(
-        currentDate.getTime() - activationDate.getTime()
-      );
-      const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      if (user.isAdmin === true) {
+        next();
+      } else {
+        const activationDate = new Date(user?.activationDate);
+        const currentDate = new Date();
+        const timeDiff = Math.abs(
+          currentDate.getTime() - activationDate.getTime()
+        );
+        const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        console.log(diffDays);
 
-      if (diffDays > user?.days) {
-        return res.status(401).json({
-          error: "Subscription is over. Please renew your subscription.",
-        });
+        if (diffDays > user?.days) {
+          return res.status(401).json({
+            error: "Subscription is over. Please renew your subscription.",
+          });
+        }
+
+        next();
       }
-
-      next();
     } catch (err) {
       if (err.name == "TokenExpiredError") {
         return res
