@@ -21,7 +21,7 @@ const checkVipStatus = async (req, res, next) => {
           currentDate.getTime() - activationDate.getTime()
         );
         const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        console.log(diffDays);
+        // console.log(diffDays);
 
         if (diffDays > user?.days) {
           return res.status(401).json({
