@@ -279,7 +279,7 @@ const getCredentials = (req, res) => {
 };
 
 const getVipUsers = async (req, res) => {
-  const vipUsers = await User.find({ paid: true });
+  const vipUsers = await User.find({ paid: true }).select("-password");
   if (!vipUsers) {
     res.status(400).json("Vip users not found");
   } else {
@@ -288,7 +288,7 @@ const getVipUsers = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-  const users = await User.find();
+  const users = await User.find().select("-password");
   if (!users) {
     res.status(400).json("Users not found");
   } else {
@@ -296,7 +296,7 @@ const getUsers = async (req, res) => {
   }
 };
 const getUser = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).select("-password");
   if (!user) {
     res.status(400).json("User not found");
   } else {
