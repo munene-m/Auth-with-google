@@ -1,8 +1,10 @@
-const User = require("../models/User");
-const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
+const fs = require('fs');
+const path = require('path');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const passport = require("passport");
+const User = require("../models/User");
+const nodemailer = require("nodemailer");
 const {
   sendVerificationEmail,
   sendNewsletter,
@@ -195,17 +197,18 @@ const requestPasswordReset = async (req, res) => {
   user.passResetToken = resetToken;
   await user.save();
 
+  const client = email.split('@')[0];
+  const resetPath = path.join(__dirname, '/client/passwordReset.html');
+  const resetTemplate = fs.readFileSync(resetPath, 'utf-8');
+  const linkUrl =   `${process.env.CLIENT_URL}`;
+  const resetT =   `${resetToken}`;
+  const personalizedTemplate = resetTemplate.replace('{{client}}', client).replace('{{linkUrl}}', linkUrl).replace('{{reset}}', resetT);
+
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to: email,
     subject: "SportyPredict Password Reset",
-    html: `
-      <p>Hi ${user.username},</p>
-      <p>We received a request to change your password. You can click the button below to proceed with creating a new password.</p>
-      <a href="${process.env.CLIENT_URL}/reset-password/${resetToken}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
-      <p style="margin-top: 10px">If you ignore this email, your password will not be changed. This link expires in 1 hour.</p>
-      
-    `,
+    html: personalizedTemplate,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
