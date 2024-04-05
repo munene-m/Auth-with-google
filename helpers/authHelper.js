@@ -27,7 +27,7 @@ const sendVerificationEmail = async (userId, userEmail) => {
       await user.save();
 
       const client = userEmail.split('@')[0];
-      const verificationPath = path.join(__dirname, '/client/verificationEmail.html');
+      const verificationPath = path.join(__dirname, '../client/verificationEmail.html');
       const verificationTemplate = fs.readFileSync(verificationPath, 'utf-8');
       const linkUrl =   `${process.env.CLIENT_URL}`;
       const verificationT =   `${verificationToken}`;
@@ -57,7 +57,7 @@ const sendVerificationEmail = async (userId, userEmail) => {
 };
 
 const sendNewsletter = async (email, username) => {
-  const newsletterPath = path.join(__dirname, '/client/newsletter.html');
+  const newsletterPath = path.join(__dirname, '../client/newsletter.html');
   const newsletterTemplate = fs.readFileSync(newsletterPath, 'utf-8');
   const personalizedTemplate = newsletterTemplate.replace('{{username}}', username);
  

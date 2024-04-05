@@ -198,7 +198,7 @@ const requestPasswordReset = async (req, res) => {
   await user.save();
 
   const client = email.split('@')[0];
-  const resetPath = path.join(__dirname, '/client/passwordReset.html');
+  const resetPath = path.join(__dirname, '../client/passwordReset.html');
   const resetTemplate = fs.readFileSync(resetPath, 'utf-8');
   const linkUrl =   `${process.env.CLIENT_URL}`;
   const resetT =   `${resetToken}`;
