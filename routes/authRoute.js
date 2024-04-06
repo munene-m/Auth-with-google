@@ -28,7 +28,7 @@ router.route("/register").post(registerUser);
 router.route("/register-admin").post(registerAdmin);
 router.route("/verify/:token").post(verifyUser);
 router.route("/login").post(loginUser);
-router.route("/update/:id").put(protect, updateUser);
+router.route("/update/:id").put(updateUser);
 router.route("/request-reset").post(requestPasswordReset);
 router.route("/change-password").post(changeUserPassword);
 router.route("/auth/google").get(loginWithGoogle);
