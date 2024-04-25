@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
+const fetch = require("node-fetch")
 const session = require("express-session");
 const morgan = require("morgan");
 const MongoStore = require("connect-mongo");
@@ -20,6 +21,17 @@ const stripeRoute = require("./routes/stripeRoute");
 const PORT = 3000;
 
 connectDB();
+const fetchDataFromServer = async () => {
+  try {
+    await fetch("https://farid-creations-server.onrender.com/current");
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+// Call the function immediately when the server starts
+fetchDataFromServer();
+
+setInterval(fetchDataFromServer, 13 * 60 * 1000);
 dotenv.config();
 app.use(express.json());
 app.use(cors());

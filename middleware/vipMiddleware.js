@@ -24,6 +24,8 @@ const checkVipStatus = async (req, res, next) => {
         // console.log(diffDays);
 
         if (diffDays > user?.days) {
+          user.paid = false
+          await user.save()
           return res.status(401).json({
             error: "Subscription is over. Please renew your subscription.",
           });
