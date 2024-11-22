@@ -271,16 +271,33 @@ const getPredictions = async (req, res) => {
   }
 };
 
-const getAllPredictions = async (req, res) => {
+const getAllSports = async (req, res) => {
   try {
-    const predictions = await Sport.find(); 
-    if (!predictions.length) {
-      return res.status(404).json({ message: "No predictions found" });
+    // Fetch all documents from the Sport collection
+    const sports = await Sport.find({})
+      .sort({ createdAt: -1 }) 
+      .select('-__v'); 
+    
+    if (!sports || sports.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No sports data found in the database"
+      });
     }
-    res.status(200).json(predictions);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "An error occurred while fetching predictions" });
+
+    res.status(200).json({
+      success: true,
+      count: sports.length,
+      data: sports
+    });
+
+  } catch (error) {
+    console.error('Error fetching sports data:', error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while fetching sports data",
+      error: error.message
+    });
   }
 };
 
@@ -303,6 +320,6 @@ module.exports = {
   getPrediction,
   getPredictionFromSport,
   getPredictions,
-  getAllPredictions,
+  getAllSports,
   deletePrediction,
 };
