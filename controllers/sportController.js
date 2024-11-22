@@ -271,6 +271,19 @@ const getPredictions = async (req, res) => {
   }
 };
 
+const getAllPredictions = async (req, res) => {
+  try {
+    const predictions = await Sport.find(); 
+    if (!predictions.length) {
+      return res.status(404).json({ message: "No predictions found" });
+    }
+    res.status(200).json(predictions);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while fetching predictions" });
+  }
+};
+
 const deletePrediction = async (req, res) => {
   try {
     const prediction = await Sport.findById(req.params.id);
@@ -290,5 +303,6 @@ module.exports = {
   getPrediction,
   getPredictionFromSport,
   getPredictions,
+  getAllPredictions,
   deletePrediction,
 };

@@ -6,6 +6,7 @@ const {
   createPrediction,
   updatePrediction,
   getPrediction,
+  getAllPredictions,
   getPredictionFromSport,
   getPredictions,
   deletePrediction,
@@ -13,6 +14,8 @@ const {
 const { adminProtect } = require("../middleware/authMiddleware");
 
 router
+  .route("/allPredictions")
+  .get(getAllPredictions)
   .route("/create/:sport")
   .post(
     adminProtect,
