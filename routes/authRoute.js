@@ -9,10 +9,8 @@ const {
   redirectUser,
   getVipUsers,
   deleteUser,
-  loginWithGoogle,
   requestPasswordReset,
   changeUserPassword,
-  googleAuthCallback,
   updateUser,
   getUser,
 } = require("../controllers/authController");
@@ -31,8 +29,6 @@ router.route("/login").post(loginUser);
 router.route("/update/:id").put(updateUser);
 router.route("/request-reset").post(requestPasswordReset);
 router.route("/change-password").post(changeUserPassword);
-router.route("/auth/google").get(loginWithGoogle);
-router.route("/auth/google/callback").get(googleAuthCallback);
 router.route("/delete/:id").delete(protect, deleteUser);
 
 module.exports = router;

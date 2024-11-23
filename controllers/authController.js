@@ -2,14 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const passport = require("passport");
 const User = require("../models/User");
 const nodemailer = require("nodemailer");
 const {
   sendVerificationEmail,
   sendNewsletter,
 } = require("../helpers/authHelper.js");
-require("../passport.js");
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -264,18 +262,6 @@ const changeUserPassword = async (req, res) => {
   }
 };
 
-// Log in user with Google
-const loginWithGoogle = passport.authenticate("google", {
-  scope: ["profile", "email"],
-});
-
-// Callback for Google authentication
-const googleAuthCallback = [
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    successRedirect: "/auth/googleCredentials",
-  }),
-];
 
 const getCredentials = (req, res) => {
   res.status(200).json(req.user);
@@ -342,8 +328,6 @@ module.exports = {
   changeUserPassword,
   verifyUser,
   updateUser,
-  loginWithGoogle,
-  googleAuthCallback,
   getUsers,
   getUser,
   deleteUser,

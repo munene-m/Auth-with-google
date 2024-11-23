@@ -15,7 +15,9 @@ const { adminProtect } = require("../middleware/authMiddleware");
 
 router
   .route("/all")
-  .get(getAllSports)
+  .get(getAllSports);
+
+router
   .route("/create/:sport")
   .post(
     adminProtect,

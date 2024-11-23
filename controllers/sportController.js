@@ -273,33 +273,53 @@ const getPredictions = async (req, res) => {
 
 const getAllSports = async (req, res) => {
   try {
-    // Fetch all documents from the Sport collection
-    const sports = await Sport.find({})
-      .sort({ createdAt: -1 }) 
-      .select('-__v'); 
-    
+    const sports = await Sport.aggregate([
+      {
+        $group: {
+          _id: {
+            teamA: "$teamA",
+            teamB: "$teamB",
+          },
+          sport: { $first: "$sport" },
+          date: { $first: "$date" },
+          league: { $first: "$league" },
+          category: { $first: "$category" },
+          teamAPosition: { $first: "$teamAPosition" },
+          teamBPosition: { $first: "$teamBPosition" },
+          description: { $first: "$description" },
+          leagueIcon: { $first: "$leagueIcon" },
+          teamAIcon: { $first: "$teamAIcon" },
+          teamBIcon: { $first: "$teamBIcon" },
+          createdAt: { $first: "$createdAt" },
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+    ]);
+
     if (!sports || sports.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No sports data found in the database"
+        message: "No sports data found in the database",
       });
     }
 
     res.status(200).json({
       success: true,
       count: sports.length,
-      data: sports
+      data: sports,
     });
-
   } catch (error) {
-    console.error('Error fetching sports data:', error);
+    console.error("Error fetching sports data:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error while fetching sports data",
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 
 const deletePrediction = async (req, res) => {
   try {
