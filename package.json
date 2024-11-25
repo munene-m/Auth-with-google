@@ -10,6 +10,9 @@
   "keywords": [],
   "author": "munene-m",
   "license": "ISC",
+  "engines": {
+    "node": ">=22.11.0 <23.0.0"
+  },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",

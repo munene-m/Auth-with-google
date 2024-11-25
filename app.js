@@ -18,7 +18,7 @@ const timeRoute = require("./routes/timeRoute");
 const gameScoreRoute = require("./routes/gameScoreRoute");
 const paymentRecordsRoute = require("./routes/paymentRoutes");
 const stripeRoute = require("./routes/stripeRoute");
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 connectDB();
 const fetchDataFromServer = async () => {
