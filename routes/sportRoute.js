@@ -11,11 +11,18 @@ const {
   getPredictions,
   deletePrediction,
 } = require("../controllers/sportController");
+const { getAllPredictions} = require('../controllers/predictionController.js');
 const { adminProtect } = require("../middleware/authMiddleware");
 
 router
   .route("/all")
   .get(getAllSports);
+
+router
+  .route("/allPredictions")
+  .get(getAllPredictions);
+
+
 
 router
   .route("/create/:sport")

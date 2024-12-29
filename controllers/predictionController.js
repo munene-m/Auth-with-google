@@ -714,6 +714,51 @@ const getPredictions = async (req, res) => {
       .json({ error: "An error occurred when fetching predictions" });
   }
 };
+const getAllPredictions = async (req, res) => {
+  try {
+    const predictions = await Admin.aggregate([
+      {
+        $group: {
+          _id: {
+            teamA: "$teamA",
+            teamB: "$teamB",
+          },
+          teamB: { $first: "$teamB" },
+          teamA: { $first: "$teamA" },
+          league: { $first: "$league" },
+          leagueIcon: { $first: "$leagueIcon" },
+          teamAIcon: { $first: "$teamAIcon" },
+          teamBIcon: { $first: "$teamBIcon" },
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+    ]);
+
+    if (!predictions || predictions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No predictions found in the database",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Predictions fetched successfully",
+      count: predictions.length,
+      data: predictions,
+    });
+  } catch (error) {
+    console.error("Error fetching predictions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while fetching predictions",
+      error: error.message,
+    });
+  }
+};
+
 
 const deletePrediction = async (req, res) => {
   try {
@@ -740,6 +785,7 @@ module.exports = {
   getBetOfTheDay,
   getUpcoming,
   getFreeTips,
+  getAllPredictions,
   getVipPredictions,
   getPredictionInCategory,
   getPredictions,

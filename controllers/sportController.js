@@ -166,7 +166,6 @@ const updatePrediction = async (req, res) => {
     let teamAIcon = prediction.teamAIcon;
     let teamBIcon = prediction.teamBIcon;
 
-    // Handle image uploads
     const handleImageUpload = async (fieldName, defaultUrl) => {
       if (req.files[fieldName]) {
         const result = await cloudinary.uploader.upload(
@@ -178,12 +177,10 @@ const updatePrediction = async (req, res) => {
       return defaultUrl;
     };
 
-    // Update leagueIcon, teamAIcon, and teamBIcon if new files are provided
     leagueIcon = await handleImageUpload("leagueIcon", leagueIcon);
     teamAIcon = await handleImageUpload("teamAIcon", teamAIcon);
     teamBIcon = await handleImageUpload("teamBIcon", teamBIcon);
 
-    // Prepare updateFields object with mandatory fields
     const updateFields = {
       time,
       tip,
@@ -207,14 +204,12 @@ const updatePrediction = async (req, res) => {
       description,
     };
 
-    // Find and update the prediction
     const updatedPrediction = await Sport.findByIdAndUpdate(
       req.params.id,
       updateFields,
       { new: true }
     );
 
-    // Return the updated prediction
     res.status(200).json(updatedPrediction);
   } catch (error) {
     console.error(error);
@@ -281,16 +276,11 @@ const getAllSports = async (req, res) => {
             teamB: "$teamB",
           },
           sport: { $first: "$sport" },
-          date: { $first: "$date" },
           league: { $first: "$league" },
           category: { $first: "$category" },
-          teamAPosition: { $first: "$teamAPosition" },
-          teamBPosition: { $first: "$teamBPosition" },
-          description: { $first: "$description" },
           leagueIcon: { $first: "$leagueIcon" },
           teamAIcon: { $first: "$teamAIcon" },
           teamBIcon: { $first: "$teamBIcon" },
-          createdAt: { $first: "$createdAt" },
         },
       },
       {
@@ -307,6 +297,7 @@ const getAllSports = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      message: "Sports data fetched successfully",
       count: sports.length,
       data: sports,
     });
